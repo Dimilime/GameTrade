@@ -1,23 +1,28 @@
 package be.souk.models;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
+
+import be.souk.dao.*;
 
 public class Player extends User implements Serializable {
 	
 	private static final long serialVersionUID = -3258539560199471902L;
 	
 	private String pseudo;
-	private LocalDate dateOfBirth;
-	private LocalDate registrationDate;
+	private Date dateOfBirth;
+	private Date registrationDate;
 	private int credit;
 	private ArrayList<Booking> bookings;
+	
+	private AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private DAO<Player> playerDAO = adf.getPlayerDAO();
 
 	public Player() {}
 	
-	public Player(int idUser, String userName, String password, String pseudo, LocalDate dateOfBirth, 
-			LocalDate registrationDate, int credit) {
+	public Player(int idUser, String userName, String password, String pseudo, Date dateOfBirth, 
+			Date registrationDate, int credit) {
 		super(idUser, userName, password);
 		this.pseudo = pseudo;
 		this.dateOfBirth = dateOfBirth;
@@ -35,19 +40,19 @@ public class Player extends User implements Serializable {
 		this.pseudo = pseudo;
 	}
 
-	public LocalDate getDateOfBirth() {
+	public Date getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
+	public void setDateOfBirth(Date date) {
+		this.dateOfBirth = date;
 	}
 
-	public LocalDate getRegistrationDate() {
+	public Date getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(LocalDate registrationDate) {
+	public void setRegistrationDate(Date registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 
@@ -66,6 +71,11 @@ public class Player extends User implements Serializable {
 	public void setCredit(int credit) {
 		this.credit = credit;
 	}
+	
+	public void signUp() {
+		playerDAO.create(this);
+	}
+	
 	
 	
 	

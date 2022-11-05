@@ -18,30 +18,34 @@ public abstract class User implements Serializable{
 		this.password = password;
 	}
 
-	protected int getIdUser() {
+	public int getIdUser() {
 		return idUser;
 	}
 
-	protected void setIdUser(int idUser) {
+	public void setIdUser(int idUser) {
 		this.idUser = idUser;
 	}
 
-	protected String getUserName() {
+	public String getUserName() {
 		return userName;
 	}
 
-	protected void setUserName(String userName) {
+	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
-	protected String getPassword() {
+	public String getPassword() {
 		return password;
 	}
 
-	protected void setPassword(String password) {
+	public void setPassword(String password) {
 		this.password = password;
 	}
 	
+	
+	public Boolean exists() {
+		return false;
+	}
 
 	
 	
