@@ -75,6 +75,11 @@ public class Player extends User implements Serializable {
 	public void signUp() {
 		playerDAO.create(this);
 	}
+
+	public boolean exists() {
+		
+		return ((PlayerDAO)playerDAO).exists(this);
+	}
 	
 	
 	

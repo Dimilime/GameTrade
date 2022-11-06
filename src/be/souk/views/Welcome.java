@@ -44,6 +44,7 @@ public class Welcome extends JFrame {
 	 * Create the frame.
 	 */
 	public Welcome() {
+		setTitle("Game Trade");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 623, 482);
@@ -54,18 +55,22 @@ public class Welcome extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnNewButton = new JButton("Sign in");
-		btnNewButton.setBackground(new Color(192, 192, 192));
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnSignIn = new JButton("Sign in");
+		btnSignIn.setBackground(new Color(192, 192, 192));
+		btnSignIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				Signin signin = new Signin();
+				signin.setVisible(true);
+				dispose();
 			}
 		});
-		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 20));
-		btnNewButton.setBounds(120, 266, 155, 33);
-		contentPane.add(btnNewButton);
+		btnSignIn.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btnSignIn.setBounds(120, 266, 155, 33);
+		contentPane.add(btnSignIn);
 		
-		JButton btnSignIn = new JButton("Sign up");
-		btnSignIn.addActionListener(new ActionListener() {
+		JButton btnSignUp = new JButton("Sign up");
+		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				Signup signup = new Signup();
@@ -73,10 +78,10 @@ public class Welcome extends JFrame {
 				dispose();
 			}
 		});
-		btnSignIn.setBackground(new Color(192, 192, 192));
-		btnSignIn.setFont(new Font("Tahoma", Font.BOLD, 20));
-		btnSignIn.setBounds(334, 166, 155, 33);
-		contentPane.add(btnSignIn);
+		btnSignUp.setBackground(new Color(192, 192, 192));
+		btnSignUp.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btnSignUp.setBounds(334, 166, 155, 33);
+		contentPane.add(btnSignUp);
 		
 		lblBackGroundImg = new JLabel("");
 		lblBackGroundImg.setFont(new Font("Tahoma", Font.PLAIN, 12));

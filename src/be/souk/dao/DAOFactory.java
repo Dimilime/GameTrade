@@ -38,6 +38,11 @@ public class DAOFactory extends AbstractDAOFactory {
 	public DAO<VideoGame> getVideoGameDAO() {
 		return new VideoGameDAO(conn);
 	}
+
+	@Override
+	public DAO<User> getUserDAO() {
+		return new UserDAO(conn);
+	}
 	
 	
 

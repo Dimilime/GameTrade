@@ -9,11 +9,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DateFormatter;
 
-import be.souk.models.Player;
+import be.souk.models.*;
 
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.ItemListener;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,7 +24,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class Signup extends JFrame {
+public class Signin extends JFrame {
 
 	/**
 	 * 
@@ -31,20 +32,14 @@ public class Signup extends JFrame {
 	private static final long serialVersionUID = 4353208898181143528L;
 	private JPanel contentPane;
 	private Image iconSignup;
-	private JTextField txtfPseudo;
 	private JLabel lblIconSignup;
-	private JLabel lblDoB;
 	private JLabel lblUserName;
 	private JTextField txtfUserName;
 	private JLabel lblPassword;
 	private JPasswordField passwordField;
-	private JFormattedTextField dateField;
-	private JLabel lblErrorDoB;
-	private JLabel lblErrorPseudo;
 	private JLabel lblErrorUserName;
 	private JLabel lblErrorPassword;
-	private DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-	private DateFormatter df = new DateFormatter(format);
+	
 	
 
 	/**
@@ -54,7 +49,7 @@ public class Signup extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Signup frame = new Signup();
+					Signin frame = new Signin();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -66,7 +61,7 @@ public class Signup extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Signup() {
+	public Signin() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 578, 484);
 		contentPane = new JPanel();
@@ -75,43 +70,18 @@ public class Signup extends JFrame {
 		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-				
-		JLabel lblPseudo = new JLabel("Pseudo");
-		lblPseudo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lblPseudo.setForeground(new Color(255, 255, 255));
-		lblPseudo.setBounds(35, 130, 121, 25);
-		contentPane.add(lblPseudo);
-		
-		lblErrorPseudo = new JLabel("");
-		lblErrorPseudo.setForeground(new Color(255, 128, 128));
-		lblErrorPseudo.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblErrorPseudo.setBounds(166, 162, 388, 25);
-		contentPane.add(lblErrorPseudo);
 		
 		lblErrorUserName = new JLabel("");
-		lblErrorUserName.setForeground(new Color(255, 128, 128));
+		lblErrorUserName.setForeground(Color.RED);
 		lblErrorUserName.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblErrorUserName.setBounds(166, 281, 388, 30);
+		lblErrorUserName.setBounds(162, 199, 388, 25);
 		contentPane.add(lblErrorUserName);
 		
 		lblErrorPassword = new JLabel("");
-		lblErrorPassword.setForeground(new Color(255, 128, 128));
+		lblErrorPassword.setForeground(Color.RED);
 		lblErrorPassword.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblErrorPassword.setBounds(166, 348, 388, 25);
+		lblErrorPassword.setBounds(162, 259, 388, 22);
 		contentPane.add(lblErrorPassword);
-		
-		lblErrorDoB = new JLabel("");
-		lblErrorDoB.setForeground(new Color(255, 128, 128));
-		lblErrorDoB.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblErrorDoB.setBounds(166, 218, 388, 25);
-		contentPane.add(lblErrorDoB);
-		
-		txtfPseudo = new JTextField();
-		txtfPseudo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		txtfPseudo.setBounds(166, 132, 287, 25);
-		contentPane.add(txtfPseudo);
-		txtfPseudo.setColumns(10);
-		txtfPseudo.getDocument().addDocumentListener(signupListener);
 		
 		lblIconSignup = new JLabel("");
 		lblIconSignup.setBounds(234, 29, 139, 85);
@@ -119,81 +89,67 @@ public class Signup extends JFrame {
 		lblIconSignup.setIcon(new ImageIcon(iconSignup));
 		contentPane.add(lblIconSignup);
 		
-		lblDoB = new JLabel("Date of Birth");
-		lblDoB.setForeground(Color.WHITE);
-		lblDoB.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lblDoB.setBounds(35, 187, 121, 25);
-		contentPane.add(lblDoB);
-		
 		lblUserName = new JLabel("User Name");
 		lblUserName.setForeground(Color.WHITE);
 		lblUserName.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lblUserName.setBounds(35, 251, 121, 25);
+		lblUserName.setBounds(31, 162, 121, 25);
 		contentPane.add(lblUserName);
 		
 		txtfUserName = new JTextField();
 		txtfUserName.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		txtfUserName.setColumns(10);
-		txtfUserName.setBounds(166, 253, 287, 25);
+		txtfUserName.setBounds(162, 164, 287, 25);
 		txtfUserName.getDocument().addDocumentListener(signupListener);
 		contentPane.add(txtfUserName);
 		
 		lblPassword = new JLabel("Password");
 		lblPassword.setForeground(Color.WHITE);
 		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lblPassword.setBounds(35, 317, 121, 25);
+		lblPassword.setBounds(31, 228, 121, 25);
 		contentPane.add(lblPassword);
 		
-		JButton btnNewButton = new JButton("Sign up");
+		JButton btnNewButton = new JButton("Sign in");
 		btnNewButton.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) {
 
-				String pseudo, username, password, dob;
-
-				pseudo = txtfPseudo.getText();
+				String  username, password;
+				
 				username = txtfUserName.getText();
-				dob = dateField.getText();
 				password = passwordField.getPassword().toString();
-				
 
-				Player p = new Player();
-				p.setPseudo(pseudo);
-				p.setUserName(username);
-				p.setPassword(password);
-				p.setRegistrationDate(new Timestamp(new Date().getTime()) );
-				p.setCredit(10);
-				try {
-					p.setDateOfBirth(format.parse(dob));
-				} catch (ParseException e1) {
-					e1.printStackTrace();
-				}
-				if(!p.exists())
-				{
-					p.signUp();
-					JOptionPane.showMessageDialog(Signup.this, "You have successfully registered!");
-					dateField.setValue(new Date());
-					txtfPseudo.setText("");
-					txtfUserName.setText("");
-					passwordField.setText("");
-					//dispose();
-				}
-				else {
-					JOptionPane.showMessageDialog(Signup.this, "The username already exists","Error", JOptionPane.ERROR_MESSAGE);
-				}
-					
+				System.out.println(username + " " + password );
+
+				User user = User.getUser(username);
 				
+				
+				if(user != null) {
+					if(user.checkUserPassword()) {
+						
+						if(user instanceof Admin a) {
+							System.out.println("Admin connected");
+						}
+						else if( user instanceof Player p) {
+							System.out.println("Player connected");
+						}
+						
+					}else
+						JOptionPane.showMessageDialog(null, "The password is not correct");
+				}else
+					JOptionPane.showMessageDialog(null, "The username doesn't exist");
+				
+				dispose();
 			}
 
 		});
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		btnNewButton.setBackground(new Color(192, 192, 192));
-		btnNewButton.setBounds(166, 377, 287, 39);
+		btnNewButton.setBounds(162, 288, 287, 39);
 		contentPane.add(btnNewButton);
 		
 		passwordField = new JPasswordField();
 		passwordField.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		passwordField.setBounds(166, 317, 287, 25);
+		passwordField.setBounds(162, 228, 287, 25);
 		contentPane.add(passwordField);
 		passwordField.getDocument().addDocumentListener(signupListener);
 		
@@ -211,15 +167,8 @@ public class Signup extends JFrame {
 			}
 		});
 		chckbxShowPwd.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		chckbxShowPwd.setBounds(453, 317, 105, 25);
+		chckbxShowPwd.setBounds(449, 228, 105, 25);
 		contentPane.add(chckbxShowPwd);
-		
-		dateField = new JFormattedTextField(df);
-		dateField.getDocument().addDocumentListener(signupListener);
-		dateField.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		dateField.setBounds(166, 187, 287, 25);
-		dateField.setValue(new Date());
-		contentPane.add(dateField);
 
 		
 	}
@@ -241,23 +190,12 @@ public class Signup extends JFrame {
 		}
 
 		public void warn() {
-			if (!dateField.getText().matches("^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$")) {
-				lblErrorDoB.setText("Error: Please enter date as dd/mm/yyyy format"); 
-			}else
-				lblErrorDoB.setText(""); 
-			
-			
 			if(!(txtfUserName.getText().length() >=5 && txtfUserName.getText().length() <=30)) {
 				lblErrorUserName.setText("Please enter a username of minimum 5 characters and maximum 30");
 			}
 			else
 				lblErrorUserName.setText("");
 			
-			if(!(txtfPseudo.getText().length() >=5 && txtfPseudo.getText().length() <=30)) {
-				lblErrorPseudo.setText("Please enter a pseudo of minimum 5 characters and maximum 30");
-			}
-			else
-				lblErrorPseudo.setText("");
 			
 			if(!(passwordField.getPassword().length >= 8 && passwordField.getPassword().length <=30)) {
 				lblErrorPassword.setText("Please enter a password of minimum 8 characters and maximum 30");

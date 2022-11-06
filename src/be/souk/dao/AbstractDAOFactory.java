@@ -7,6 +7,8 @@ public abstract class AbstractDAOFactory {
 	public static final int DAO_FACTORY = 0;
 	public static final int XML_DAO_FACTORY = 1;
 	
+	public abstract DAO<User> getUserDAO();
+	
 	public abstract DAO<Admin> getAdminDAO();
 	
 	public abstract DAO<Booking> getBookingDAO();

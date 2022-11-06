@@ -2,9 +2,15 @@ package be.souk.models;
 
 import java.io.Serializable;
 
+import be.souk.dao.AbstractDAOFactory;
+import be.souk.dao.*;
+
 public abstract class User implements Serializable{
 
 	private static final long serialVersionUID = -2478199171149635958L;
+	
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<User> userDAO = adf.getUserDAO();
 	
 	private int idUser;
 	private String userName;
@@ -42,10 +48,13 @@ public abstract class User implements Serializable{
 		this.password = password;
 	}
 	
-	
-	public Boolean exists() {
-		return false;
+	public  static User getUser(String username) {
+		return ((UserDAO)userDAO).getUser(username);
 	}
+	public  boolean checkUserPassword() {
+		return ((UserDAO)userDAO).checkUserPassword(this);
+	}
+	
 
 	
 	
