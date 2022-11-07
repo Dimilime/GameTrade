@@ -27,7 +27,6 @@ public class PlayerDAO extends DAO<Player>  {
 			try (ResultSet res = connect.createStatement().executeQuery(reqId)) {
 				if(res.next())
 					userId= res.getInt(1);
-				System.out.println(userId);
 			} 
 			
 			try(PreparedStatement stmt2 = connect.prepareStatement(req2))

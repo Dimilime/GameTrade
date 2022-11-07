@@ -50,7 +50,7 @@ public class UserDAO extends DAO<User> {
 			}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("Error username or password not found!");
 		}
 		return valid;
 	}
@@ -96,7 +96,7 @@ public class UserDAO extends DAO<User> {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("Error user not found!");
 		}
 		
 		return user;

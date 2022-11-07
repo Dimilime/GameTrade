@@ -84,8 +84,8 @@ public class Signin extends JFrame {
 		contentPane.add(lblErrorPassword);
 		
 		lblIconSignup = new JLabel("");
-		lblIconSignup.setBounds(234, 29, 139, 85);
-		iconSignup = new ImageIcon(Welcome.class.getResource("/ressources/add-user.png")).getImage().getScaledInstance(lblIconSignup.getWidth(), lblIconSignup.getHeight(), Image.SCALE_SMOOTH);
+		lblIconSignup.setBounds(234, 29, 139, 114);
+		iconSignup = new ImageIcon(Welcome.class.getResource("/ressources/user-profile.png")).getImage().getScaledInstance(lblIconSignup.getWidth(), lblIconSignup.getHeight(), Image.SCALE_SMOOTH);
 		lblIconSignup.setIcon(new ImageIcon(iconSignup));
 		contentPane.add(lblIconSignup);
 		
@@ -116,29 +116,27 @@ public class Signin extends JFrame {
 				String  username, password;
 				
 				username = txtfUserName.getText();
-				password = passwordField.getPassword().toString();
+				password = String.valueOf(passwordField.getPassword());
 
 				System.out.println(username + " " + password );
 
 				User user = User.getUser(username);
+				user.setPassword(password);
+				
+				if(user != null && user.checkUserPassword()) {
+					
+					if(user instanceof Admin a) {
+						System.out.println("Admin connected");
+					}
+					else if( user instanceof Player p) {
+						System.out.println("Player connected");
+					}
+					dispose();
+				}
+				else
+					JOptionPane.showMessageDialog(null, "The username or the password is not correct","Error",JOptionPane.ERROR_MESSAGE);
 				
 				
-				if(user != null) {
-					if(user.checkUserPassword()) {
-						
-						if(user instanceof Admin a) {
-							System.out.println("Admin connected");
-						}
-						else if( user instanceof Player p) {
-							System.out.println("Player connected");
-						}
-						
-					}else
-						JOptionPane.showMessageDialog(null, "The password is not correct");
-				}else
-					JOptionPane.showMessageDialog(null, "The username doesn't exist");
-				
-				dispose();
 			}
 
 		});

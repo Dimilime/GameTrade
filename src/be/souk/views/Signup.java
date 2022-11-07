@@ -154,7 +154,7 @@ public class Signup extends JFrame {
 				pseudo = txtfPseudo.getText();
 				username = txtfUserName.getText();
 				dob = dateField.getText();
-				password = passwordField.getPassword().toString();
+				password = String.valueOf(passwordField.getPassword());
 				
 
 				Player p = new Player();

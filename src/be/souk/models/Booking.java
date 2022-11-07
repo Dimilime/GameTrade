@@ -10,11 +10,13 @@ public class Booking implements Serializable{
 	private int idBooking;
 	private LocalDate bookingDate;
 	private Player borrower;
+	private VideoGame videoGame;
 	
-	public Booking(int idBooking, LocalDate bookingDate, Player borrower) {
+	public Booking(int idBooking, LocalDate bookingDate, Player borrower, VideoGame videoGame) {
 		this.idBooking = idBooking;
 		this.bookingDate = bookingDate;
 		this.borrower = borrower;
+		this.videoGame = videoGame;
 	}
 
 	public int getIdBooking() {
@@ -39,6 +41,14 @@ public class Booking implements Serializable{
 
 	public void setBorrower(Player borrower) {
 		this.borrower = borrower;
+	}
+
+	public VideoGame getVideoGame() {
+		return videoGame;
+	}
+
+	public void setVideoGame(VideoGame videoGame) {
+		this.videoGame = videoGame;
 	}
 	
 	
