@@ -1,8 +1,8 @@
 package be.souk.models;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 import be.souk.dao.*;
 
@@ -11,18 +11,18 @@ public class Player extends User implements Serializable {
 	private static final long serialVersionUID = -3258539560199471902L;
 	
 	private String pseudo;
-	private Date dateOfBirth;
-	private Date registrationDate;
+	private LocalDate dateOfBirth;
+	private LocalDate registrationDate;
 	private int credit;
 	private ArrayList<Booking> bookings;
 	
-	private AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
-	private DAO<Player> playerDAO = adf.getPlayerDAO();
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<Player> playerDAO = adf.getPlayerDAO();
 
 	public Player() {}
 	
-	public Player(int idUser, String userName, String password, String pseudo, Date dateOfBirth, 
-			Date registrationDate, int credit) {
+	public Player(int idUser, String userName, String password, String pseudo, LocalDate dateOfBirth, 
+			LocalDate registrationDate, int credit) {
 		super(idUser, userName, password);
 		this.pseudo = pseudo;
 		this.dateOfBirth = dateOfBirth;
@@ -40,19 +40,19 @@ public class Player extends User implements Serializable {
 		this.pseudo = pseudo;
 	}
 
-	public Date getDateOfBirth() {
+	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(Date date) {
+	public void setDateOfBirth(LocalDate date) {
 		this.dateOfBirth = date;
 	}
 
-	public Date getRegistrationDate() {
+	public LocalDate getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(Date registrationDate) {
+	public void setRegistrationDate(LocalDate registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 
@@ -81,7 +81,24 @@ public class Player extends User implements Serializable {
 		return ((PlayerDAO)playerDAO).exists(this);
 	}
 	
+	public void addBirthdayBonus() {
+		 
+		if(checkDateForBonus()) {
+			
+		}
+	}
 	
+	private boolean checkDateForBonus() {
+		
+		//get his birdthday og this year
+		LocalDate birthday = LocalDate.of(LocalDate.now().getYear(), dateOfBirth.getMonth(), dateOfBirth.getDayOfMonth());
+		return false;
+	}
+	
+	private boolean bonusAlreadyAdded() {
+		
+		return ((PlayerDAO)playerDAO).bonusAdded(this);
+	}
 	
 	
 

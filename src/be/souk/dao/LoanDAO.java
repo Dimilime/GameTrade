@@ -12,32 +12,27 @@ public class LoanDAO extends DAO<Loan>  {
 	}
 
 	@Override
-	public boolean create(Loan obj) {
-		// TODO Auto-generated method stub
+	public boolean create(Loan loan) {
 		return false;
 	}
 
 	@Override
-	public boolean delete(Loan obj) {
-		// TODO Auto-generated method stub
+	public boolean delete(Loan loan) {
 		return false;
 	}
 
 	@Override
-	public boolean update(Loan obj) {
-		// TODO Auto-generated method stub
+	public boolean update(Loan loan) {
 		return false;
 	}
 
 	@Override
 	public Loan find(int id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ArrayList<Loan> findAll() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

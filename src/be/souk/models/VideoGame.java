@@ -1,6 +1,10 @@
 package be.souk.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
+import be.souk.dao.AbstractDAOFactory;
+import be.souk.dao.DAO;
 
 public class VideoGame implements Serializable {
 	
@@ -10,15 +14,16 @@ public class VideoGame implements Serializable {
 	private String name;
 	private String console;
 	private int crediCost;
-	private Booking booking;
+	private ArrayList<Copy> copies;
 	
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<VideoGame> videoGameDAO = adf.getVideoGameDAO();
 	
-	public VideoGame(int idVideoGame, String name, String console, int crediCost, Booking booking) {
+	public VideoGame(int idVideoGame, String name, String console, int crediCost) {
 		this.idVideoGame = idVideoGame;
 		this.name = name;
 		this.console = console;
 		this.crediCost = crediCost;
-		this.booking = booking;
 	}
 	
 	public int getIdVideoGame() {
@@ -45,18 +50,28 @@ public class VideoGame implements Serializable {
 	public void setCrediCost(int crediCost) {
 		this.crediCost = crediCost;
 	}
-	public Booking getBooking() {
-		return booking;
-	}
-	public void setBooking(Booking booking) {
-		this.booking = booking;
+	
+	public ArrayList<Copy> getCopies() {
+		return copies;
 	}
 
+	public void setCopies(ArrayList<Copy> copies) {
+		this.copies = copies;
+	}
+	
 	@Override
 	public String toString() {
 		return "VideoGame [idVideoGame=" + idVideoGame + ", name=" + name + ", console=" + console + ", crediCost="
-				+ crediCost + ", booking=" + booking + "]";
+				+ crediCost + "]";
 	}
+	public boolean update() {
+		return videoGameDAO.update(this);
+	}
+	
+	public static ArrayList<VideoGame> getAll(){
+		return videoGameDAO.findAll();
+	}
+
 	
 	
 	

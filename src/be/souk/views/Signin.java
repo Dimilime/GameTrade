@@ -7,19 +7,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.DateFormatter;
-
 import be.souk.models.*;
 
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.ItemListener;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -72,13 +64,13 @@ public class Signin extends JFrame {
 		contentPane.setLayout(null);
 		
 		lblErrorUserName = new JLabel("");
-		lblErrorUserName.setForeground(Color.RED);
+		lblErrorUserName.setForeground(new Color(255, 128, 128));
 		lblErrorUserName.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblErrorUserName.setBounds(162, 199, 388, 25);
 		contentPane.add(lblErrorUserName);
 		
 		lblErrorPassword = new JLabel("");
-		lblErrorPassword.setForeground(Color.RED);
+		lblErrorPassword.setForeground(new Color(255, 128, 128));
 		lblErrorPassword.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblErrorPassword.setBounds(162, 259, 388, 22);
 		contentPane.add(lblErrorPassword);
@@ -99,7 +91,7 @@ public class Signin extends JFrame {
 		txtfUserName.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		txtfUserName.setColumns(10);
 		txtfUserName.setBounds(162, 164, 287, 25);
-		txtfUserName.getDocument().addDocumentListener(signupListener);
+		txtfUserName.getDocument().addDocumentListener(signinListener);
 		contentPane.add(txtfUserName);
 		
 		lblPassword = new JLabel("Password");
@@ -118,23 +110,28 @@ public class Signin extends JFrame {
 				username = txtfUserName.getText();
 				password = String.valueOf(passwordField.getPassword());
 
-				System.out.println(username + " " + password );
-
 				User user = User.getUser(username);
-				user.setPassword(password);
 				
-				if(user != null && user.checkUserPassword()) {
-					
-					if(user instanceof Admin a) {
-						System.out.println("Admin connected");
+				
+				if(user != null) {
+					user.setPassword(password);
+					if(user.checkUserPassword()) {
+						if(user instanceof Admin a) {
+							AdminInterface adminInterface = new AdminInterface(a);
+							adminInterface.setVisible(true);
+							dispose();
+						}
+						else if( user instanceof Player p) {
+							System.out.println("Player connected");
+						}
+						dispose();
 					}
-					else if( user instanceof Player p) {
-						System.out.println("Player connected");
-					}
-					dispose();
+					else
+						JOptionPane.showMessageDialog(null, "The password is not correct","Error",JOptionPane.ERROR_MESSAGE);
+						
 				}
 				else
-					JOptionPane.showMessageDialog(null, "The username or the password is not correct","Error",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "The username is not correct","Error",JOptionPane.ERROR_MESSAGE);
 				
 				
 			}
@@ -149,7 +146,7 @@ public class Signin extends JFrame {
 		passwordField.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		passwordField.setBounds(162, 228, 287, 25);
 		contentPane.add(passwordField);
-		passwordField.getDocument().addDocumentListener(signupListener);
+		passwordField.getDocument().addDocumentListener(signinListener);
 		
 		char defaultt = passwordField.getEchoChar();
 		JCheckBox chckbxShowPwd = new JCheckBox("Show password");
@@ -171,7 +168,7 @@ public class Signin extends JFrame {
 		
 	}
 	
-	DocumentListener signupListener = new DocumentListener() {
+	DocumentListener signinListener = new DocumentListener() {
 		
 		@Override
 		public void removeUpdate(DocumentEvent e) {
@@ -188,16 +185,22 @@ public class Signin extends JFrame {
 		}
 
 		public void warn() {
-			if(!(txtfUserName.getText().length() >=5 && txtfUserName.getText().length() <=30)) {
-				lblErrorUserName.setText("Please enter a username of minimum 5 characters and maximum 30");
-			}
+			if(txtfUserName.getText().trim().length()>0)
+				if(!(txtfUserName.getText().length() >=5 && txtfUserName.getText().length() <=30)) {
+					lblErrorUserName.setText("Please enter a username of minimum 5 characters and maximum 30");
+				}
+				else
+					lblErrorUserName.setText("");
 			else
 				lblErrorUserName.setText("");
 			
 			
-			if(!(passwordField.getPassword().length >= 8 && passwordField.getPassword().length <=30)) {
-				lblErrorPassword.setText("Please enter a password of minimum 8 characters and maximum 30");
-			}
+			if(passwordField.getPassword().length>0)
+				if(!(passwordField.getPassword().length >= 8 && passwordField.getPassword().length <=30)) {
+					lblErrorPassword.setText("Please enter a password of minimum 8 characters and maximum 30");
+				}
+				else
+					lblErrorPassword.setText("");
 			else
 				lblErrorPassword.setText("");
 		}

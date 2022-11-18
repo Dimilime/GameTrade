@@ -1,6 +1,7 @@
 package be.souk.dao;
 
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 import be.souk.models.Player;
@@ -34,16 +35,19 @@ public class PlayerDAO extends DAO<Player>  {
 				cpt =1;
 				stmt2.setInt(cpt++, userId);
 				stmt2.setString(cpt++, player.getPseudo());
-				stmt2.setTimestamp(cpt++, new Timestamp(player.getDateOfBirth().getTime()));
-				stmt2.setTimestamp(cpt++, new Timestamp (player.getRegistrationDate().getTime()));
+				stmt2.setDate(cpt++, Date.valueOf(player.getDateOfBirth()));
+				stmt2.setDate(cpt++, Date.valueOf(player.getRegistrationDate()));
 				stmt2.setInt(cpt++, player.getCredit());
 				stmt2.executeUpdate();
+				
+				return true;
 			}
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		return false;
+		
 	}
 
 	@Override
@@ -53,6 +57,19 @@ public class PlayerDAO extends DAO<Player>  {
 
 	@Override
 	public boolean update(Player player) {
+		
+		String req = "UPDATE player"
+				+ "	  SET credit = credit+2 WHERE idUser=?";
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			stmt.setInt(1, player.getIdUser());
+			
+			if(stmt.executeUpdate() > 0)
+				return true;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
@@ -80,6 +97,27 @@ public class PlayerDAO extends DAO<Player>  {
 		}
 		
 		return exists;
+	}
+	
+	
+	
+	public boolean bonusAdded(Player player) {
+		String req = "select bonusAdded from player where idUser=?;";
+		boolean added = false;
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			stmt.setInt(1, player.getIdUser());
+			try(ResultSet res = stmt.executeQuery()) {
+				if(res.next()) {
+					added = res.getBoolean("bonusAdded");
+				}
+			}
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return added;
 	}
 	
 	

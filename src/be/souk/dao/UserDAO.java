@@ -1,6 +1,7 @@
 package be.souk.dao;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.Date;
 
@@ -84,8 +85,15 @@ public class UserDAO extends DAO<User> {
 							
 							try(ResultSet res2 = stmt2.executeQuery()){
 								if(res2.next()) {
+									int id = res2.getInt(1);
+									String uname= res2.getString(2);
+									String password = res2.getString(3);
+									String pseudo = res2.getString(4);
+									LocalDate dob = res2.getDate(5).toLocalDate();
+									LocalDate registrationDate = res2.getDate(6).toLocalDate();
+									int credit = res2.getInt(7);
 									user = new Player(
-											res2.getInt(1),res2.getString(2), res2.getString(3),res2.getString(4),(Date)res2.getDate(5),(Date)res2.getDate(6),res2.getInt(7)
+											id,uname,password,pseudo,dob,registrationDate,credit
 											);
 								}
 							}
