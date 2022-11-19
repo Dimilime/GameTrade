@@ -2,9 +2,12 @@ package be.souk.dao;
 
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 
+import be.souk.models.Admin;
 import be.souk.models.Player;
+import be.souk.models.User;
 
 public class PlayerDAO extends DAO<Player>  {
 
@@ -75,7 +78,31 @@ public class PlayerDAO extends DAO<Player>  {
 
 	@Override
 	public Player find(int id) {
-		return null;
+		
+		String req = "Select * from player where idUser=?;";
+		Player player=null;
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			
+			stmt.setInt(1, id);
+			try(ResultSet res = stmt.executeQuery()) {
+				if(res.next()) {
+					int idUser = res.getInt(1);
+					String name= res.getString(2);
+					String password = res.getString(3);
+					String pseudo = res.getString(4);
+					LocalDate dob = res.getDate(5).toLocalDate();
+					LocalDate registrationDate = res.getDate(6).toLocalDate();
+					int credit = res.getInt(7);
+					player = new Player(idUser,name,password,pseudo,dob,registrationDate,credit);
+				}		
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Error player not found!");
+		}
+		
+		return player;
 	}
 
 	@Override

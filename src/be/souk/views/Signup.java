@@ -15,9 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -39,19 +37,19 @@ public class Signup extends JFrame {
 	private JLabel lblErrorPseudo;
 	private JLabel lblErrorUserName;
 	private JLabel lblErrorPassword;
+	private JButton btnSignup;
 	private DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 	private DateTimeFormatter formatter= DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
 	
-	/**
-	 * Launch the application.
-	 */
+	//TODO: mettre en place JCALENDAR
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					Signup frame = new Signup();
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -59,9 +57,7 @@ public class Signup extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	
 	public Signup() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 578, 484);
@@ -142,8 +138,8 @@ public class Signup extends JFrame {
 		lblPassword.setBounds(35, 317, 121, 25);
 		contentPane.add(lblPassword);
 		
-		JButton btnNewButton = new JButton("Sign up");
-		btnNewButton.addActionListener(new ActionListener() 
+		btnSignup = new JButton("Sign up");
+		btnSignup.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) {
 
@@ -170,7 +166,9 @@ public class Signup extends JFrame {
 					txtfPseudo.setText("");
 					txtfUserName.setText("");
 					passwordField.setText("");
-					//dispose();
+					PlayerInterface playerInterface = new PlayerInterface(p);
+					playerInterface.setVisible(true);
+					dispose();
 				}
 				else {
 					JOptionPane.showMessageDialog(Signup.this, "The username already exists","Error", JOptionPane.ERROR_MESSAGE);
@@ -180,10 +178,10 @@ public class Signup extends JFrame {
 			}
 
 		});
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnNewButton.setBackground(new Color(192, 192, 192));
-		btnNewButton.setBounds(166, 377, 287, 39);
-		contentPane.add(btnNewButton);
+		btnSignup.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnSignup.setBackground(new Color(192, 192, 192));
+		btnSignup.setBounds(166, 377, 287, 39);
+		contentPane.add(btnSignup);
 		
 		passwordField = new JPasswordField();
 		lblPassword.setLabelFor(passwordField);
@@ -215,6 +213,17 @@ public class Signup extends JFrame {
 		dateField.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		dateField.setBounds(166, 187, 287, 25);
 		contentPane.add(dateField);
+		
+		JButton btnGoBack = new JButton("GO BACK");
+		btnGoBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Welcome welcome = new Welcome();
+				welcome.setVisible(true);
+				dispose();
+			}
+		});
+		btnGoBack.setBounds(449, 10, 105, 39);
+		contentPane.add(btnGoBack);
 		
 
 		
@@ -277,5 +286,4 @@ public class Signup extends JFrame {
 
 		
 	};
-	
 }

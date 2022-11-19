@@ -42,7 +42,6 @@ public class AdminInterface extends JFrame {
 	private JTable table;
 	private JMenuBar menuBar;
 	private JButton logout;
-	private boolean editable;
 	private ArrayList<VideoGame> videoGames ;
 
 	
@@ -194,11 +193,16 @@ public class AdminInterface extends JFrame {
 		btnSetCredit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = table.getSelectedRow();
-				int newCredit = Integer.valueOf(JOptionPane.showInputDialog("Enter the new value")) ;
-				VideoGame vg = videoGames.get(rowSelected);
-				vg.setCrediCost(newCredit);
-				admin.setCreditVideoGame(vg);
-				displayTable();
+				try 
+				{
+					int newCredit = Integer.valueOf(JOptionPane.showInputDialog("Enter the new value"));
+					VideoGame vg = videoGames.get(rowSelected);
+					vg.setCrediCost(newCredit);
+					admin.setCreditVideoGame(vg);
+					displayTable();
+				}catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Please enter a number");
+				}
 				
 			}
 		});

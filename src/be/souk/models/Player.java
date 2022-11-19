@@ -100,6 +100,9 @@ public class Player extends User implements Serializable {
 		return ((PlayerDAO)playerDAO).bonusAdded(this);
 	}
 	
+	public static Player getPlayer(int id) {
+		return playerDAO.find(id);
+	}
 	
 
 }

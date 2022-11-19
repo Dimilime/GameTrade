@@ -73,22 +73,23 @@ public class VideoGameDAO extends DAO<VideoGame> {
 
 	@Override
 	public ArrayList<VideoGame> findAll() {
-		String req = "select * from VideoGame";
-		ArrayList<VideoGame> videoGames = new ArrayList<>();
+		String req = "select idVideoGame, name, creditCost, console from VideoGame Order By name ";
+		ArrayList<VideoGame> videoGames =null;
 		try (Statement stmt = connect.createStatement())
 		{
 			try (ResultSet res = stmt.executeQuery(req))
 			{
 				while(res.next()) {
 					VideoGame vg = new VideoGame(res.getInt("idVideoGame"), res.getString("name"), res.getString("console"), res.getInt("creditCost"));
+					videoGames = new ArrayList<>();
 					videoGames.add(vg);
 				}
-				return videoGames;
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return videoGames;
 	}
 	
 

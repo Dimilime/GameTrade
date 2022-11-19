@@ -24,6 +24,7 @@ public class VideoGame implements Serializable {
 		this.name = name;
 		this.console = console;
 		this.crediCost = crediCost;
+		copies = new ArrayList<>();
 	}
 	
 	public int getIdVideoGame() {
@@ -52,11 +53,7 @@ public class VideoGame implements Serializable {
 	}
 	
 	public ArrayList<Copy> getCopies() {
-		return copies;
-	}
-
-	public void setCopies(ArrayList<Copy> copies) {
-		this.copies = copies;
+		return copies = Copy.getVideoGameCopies(this) ;
 	}
 	
 	@Override
@@ -71,8 +68,17 @@ public class VideoGame implements Serializable {
 	public static ArrayList<VideoGame> getAll(){
 		return videoGameDAO.findAll();
 	}
-
 	
+	public Copy copyAvailable() {
+		
+		for (Copy copy : copies) {
+			if(copy.isAvailable())
+				return copy;
+		}
+		return null;
+		
+	}
+
 	
 	
 

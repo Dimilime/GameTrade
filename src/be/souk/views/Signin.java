@@ -63,6 +63,17 @@ public class Signin extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		JButton btnGoBack = new JButton("GO BACK");
+		btnGoBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Welcome welcome = new Welcome();
+				welcome.setVisible(true);
+				dispose();
+			}
+		});
+		btnGoBack.setBounds(449, 10, 101, 39);
+		contentPane.add(btnGoBack);
+		
 		lblErrorUserName = new JLabel("");
 		lblErrorUserName.setForeground(new Color(255, 128, 128));
 		lblErrorUserName.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -109,7 +120,8 @@ public class Signin extends JFrame {
 				
 				username = txtfUserName.getText();
 				password = String.valueOf(passwordField.getPassword());
-
+				
+				
 				User user = User.getUser(username);
 				
 				
@@ -122,9 +134,10 @@ public class Signin extends JFrame {
 							dispose();
 						}
 						else if( user instanceof Player p) {
-							System.out.println("Player connected");
+							PlayerInterface playerInterface = new PlayerInterface(p);
+							playerInterface.setVisible(true);
+							dispose();
 						}
-						dispose();
 					}
 					else
 						JOptionPane.showMessageDialog(null, "The password is not correct","Error",JOptionPane.ERROR_MESSAGE);

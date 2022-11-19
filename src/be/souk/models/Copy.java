@@ -1,6 +1,11 @@
 package be.souk.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
+import be.souk.dao.AbstractDAOFactory;
+import be.souk.dao.CopyDAO;
+import be.souk.dao.DAO;
 
 public class Copy implements Serializable {
 	
@@ -10,6 +15,9 @@ public class Copy implements Serializable {
 	private VideoGame videoGame;
 	private Player owner;
 	private Loan loan;
+	
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<Copy> copyDAO = adf.getCopyDAO();
 	
 	public Copy(int idCopy, VideoGame videoGame, Player owner) {
 		this.idCopy = idCopy;
@@ -50,8 +58,17 @@ public class Copy implements Serializable {
 		this.loan = loan;
 	}
 	
+	public boolean putOnLoan() {
+		return copyDAO.create(this);
+	}
 	
+	public static ArrayList<Copy> getVideoGameCopies(VideoGame vg) {
+		return ((CopyDAO)copyDAO).getVideoGameCopies(vg);
+	}
 	
+	public boolean isAvailable() {
+		return false;
+	}
 	
 
 }
