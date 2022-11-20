@@ -5,7 +5,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import be.souk.models.Booking;
 import be.souk.models.Copy;
+import be.souk.models.Loan;
 import be.souk.models.Player;
 import be.souk.models.VideoGame;
 
@@ -27,10 +29,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 
 public class PlayerInterface extends JFrame {
 
 	private static final long serialVersionUID = 7544019862560332915L;
+	private ArrayList<Booking> bookings;
+	private ArrayList<VideoGame> videoGames ;
 	private JPanel contentPane;
 	private DefaultTableModel model;
 	private JTable tableVideoGames;
@@ -40,7 +45,6 @@ public class PlayerInterface extends JFrame {
 	private JTable tableLoan;
 	private JMenuBar menuBar;
 	private JButton logout;
-	private ArrayList<VideoGame> videoGames ;
 	private JLabel lblCredit;
 	private JPanel borrowedPane;
 	private JScrollPane scrollPaneC;
@@ -145,11 +149,72 @@ public class PlayerInterface extends JFrame {
 		btnBorrow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = tableVideoGames.getSelectedRow();
+				VideoGame vg = videoGames.get(rowSelected);
+				String input;
+				int nbweek=0;
 				if(rowSelected>-1) {
-					System.out.println(rowSelected);
-					VideoGame vg = videoGames.get(rowSelected);
-					//TODO: On prend le jeu video on prend ses copies, d'abord on verifie s'il a des copies si non on retourne false et isAvaible vaudra false
-					//Si y a des copies on continue la verification et on regarde si c'est pas en pret (dans la table loan) si oui on return false si non on return la copie
+					boolean error = false;
+					do {
+						try 
+						{
+							input =JOptionPane.showInputDialog("How many weeks do you want to borrow ?");
+							//verifier s'il peut se permettre le nombre de semaine qu'il a saisit !!!
+							if(input !=null && input.trim().length()>0) {
+								nbweek = Integer.valueOf(input);
+								
+								if(nbweek<1) {
+									error = true;
+									JOptionPane.showMessageDialog(null, "Please enter a number greater than 0", null, JOptionPane.ERROR_MESSAGE);
+								}else if( player.getCredit() < vg.getCrediCost()*nbweek) {//if he has not enough to borrow
+									JOptionPane.showMessageDialog(null, "The number of weeks is too high to borrow, you haven't enough credits ",
+											null, JOptionPane.ERROR_MESSAGE);
+									error = true;
+								}
+								else
+									error=false;
+							}
+							else
+								error = false;
+						} catch (NumberFormatException ex) {
+							JOptionPane.showMessageDialog(null, "Please enter a number", null, JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+					}while(error);
+					
+					
+					vg.getCopies();
+					Copy copy = vg.copyAvailable(player);
+					
+					if(copy!=null && nbweek >0) {
+						Loan loan = new Loan(0, LocalDate.now(), LocalDate.now().plusWeeks(nbweek), true, player, copy.getOwner(), copy);
+						
+						if(loan.borrowing()) {
+							player.setCredit(player.getCredit()-vg.getCrediCost());
+							player.update();
+							lblCredit.setText("Credit(s): "+ player.getCredit()+ "  ");
+							JOptionPane.showMessageDialog(null,"loan added successfully !", null, JOptionPane.INFORMATION_MESSAGE);
+						}   
+						else
+							  JOptionPane.showMessageDialog(null, "loan not added! An error has occurred please try again", null, JOptionPane.ERROR_MESSAGE);
+					}
+					else if(nbweek >0) {
+						int response = JOptionPane.showConfirmDialog(null, "There is not available copy of this game do you want to book it?");
+						
+						if(response == 0) {
+							Booking booking = new Booking(0, LocalDate.now(), player, vg, nbweek);
+							
+							if (booking.book()) {
+								player.setCredit(player.getCredit() - vg.getCrediCost());
+								player.update();
+								lblCredit.setText("Credit(s): " + player.getCredit() + "  ");
+								JOptionPane.showMessageDialog(null, "booking added successfully !", null, JOptionPane.INFORMATION_MESSAGE);
+							}
+								  
+							  else
+								  JOptionPane.showMessageDialog(null, "booking not added! An error has occurred please try again", null, JOptionPane.ERROR_MESSAGE);
+							
+						}
+					}
 				}
 				else
 					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);

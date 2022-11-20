@@ -30,8 +30,6 @@ public class Player extends User implements Serializable {
 		this.credit = credit;
 	}
 	
-	
-	
 	public String getPseudo() {
 		return pseudo;
 	}
@@ -103,6 +101,19 @@ public class Player extends User implements Serializable {
 	public static Player getPlayer(int id) {
 		return playerDAO.find(id);
 	}
+	
+	public boolean update() {
+		return playerDAO.update(this);
+	}
+	
+	public boolean cancelBooking() {
+		//s'il cancel on lui resititue les credits qu'il a utilisé pour la réservation en récupérant le coup du jeu video pourlequel il fait la reservation
+		return false;
+	}
+	
+	
+	
+	
 	
 
 }

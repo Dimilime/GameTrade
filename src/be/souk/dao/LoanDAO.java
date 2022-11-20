@@ -13,7 +13,24 @@ public class LoanDAO extends DAO<Loan>  {
 
 	@Override
 	public boolean create(Loan loan) {
-		return false;
+		String req =  "Insert into loan (startDate, endDate, onGoing, borrower, lender, idCopy ) values (?,?,?,?,?,?); ";
+		
+		try (PreparedStatement stmt = connect.prepareStatement(req))
+		{
+			int cpt =1;
+			stmt.setDate(cpt++, Date.valueOf(loan.getStartDate()));
+			stmt.setDate(cpt++, Date.valueOf(loan.getEndDate()));
+			stmt.setBoolean(cpt++, loan.isOngoing());
+			stmt.setInt(cpt++, loan.getBorrower().getIdUser());
+			stmt.setInt(cpt++, loan.getLender().getIdUser());
+			stmt.setInt(cpt++, loan.getCopy().getIdCopy());
+			
+			return stmt.executeUpdate()>0;
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override

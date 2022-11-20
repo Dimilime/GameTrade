@@ -1,13 +1,10 @@
 package be.souk.dao;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
-import be.souk.models.Admin;
 import be.souk.models.Copy;
 import be.souk.models.Player;
-import be.souk.models.User;
 import be.souk.models.VideoGame;
 
 public class CopyDAO extends DAO<Copy> {
@@ -37,44 +34,40 @@ public class CopyDAO extends DAO<Copy> {
 
 	@Override
 	public boolean delete(Copy obj) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean update(Copy obj) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Copy find(int id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ArrayList<Copy> findAll() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	public ArrayList<Copy> getVideoGameCopies(VideoGame vg){
 
 		ArrayList<Copy> copies = null;
-		String req = "SELECT Copy.idCopy, Copy.idVideoGame, Copy.idUser"
-				+ "FROM Copy"
-				+ "WHERE (([Copy].[idVideoGame]=?));";
+		String req = "SELECT Copy.idCopy, Copy.idVideoGame, Copy.idUser "
+				+ "FROM Copy "
+				+ "WHERE Copy.idVideoGame=?;";
 		
 		try (PreparedStatement stmt = connect.prepareStatement(req))
 		{
 			stmt.setInt(1, vg.getIdVideoGame());
 			try (ResultSet res = stmt.executeQuery())
 			{
+				copies = new ArrayList<>();
 				while(res.next()) {
 					Player player = Player.getPlayer(res.getInt(3));
 					Copy copy = new Copy(res.getInt(1), vg, player);
-					copies = new ArrayList<>();
 					copies.add(copy);
 				}
 				
@@ -86,11 +79,11 @@ public class CopyDAO extends DAO<Copy> {
 		return copies;
 	}
 	
-	public boolean isAvailable(Copy copy) {
+	public boolean isAvailable(Copy copy, Player p) {
 		
-		String req = "SELECT Copy.idCopy, Loan.onGoing"
-				+ "FROM Copy INNER JOIN Loan ON Copy.idCopy = Loan.idCopy"
-				+ "WHERE (([Loan].[idCopy]=?));";
+		String req = "SELECT Copy.idCopy, Loan.onGoing "
+				+ "FROM Copy INNER JOIN Loan ON Copy.idCopy = Loan.idCopy "
+				+ "WHERE Loan.idCopy=? and Copy.idUser=?;";
 		
 		
 		boolean isAvailable = false, ongoing;
@@ -98,6 +91,7 @@ public class CopyDAO extends DAO<Copy> {
 		try(PreparedStatement stmt = connect.prepareStatement(req)) {
 			
 			stmt.setInt(1, copy.getIdCopy());
+			stmt.setInt(2, p.getIdUser());
 			try(ResultSet res = stmt.executeQuery()) {
 				
 				if(res.next())

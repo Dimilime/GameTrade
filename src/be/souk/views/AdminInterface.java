@@ -139,7 +139,7 @@ public class AdminInterface extends JFrame {
 						name = txtfName.getText().toUpperCase();
 						console = txtfConsole.getText().toUpperCase();
 						credicost = Integer.valueOf(txtfCreditCost.getText());
-						VideoGame vg = new VideoGame(0,name, console, credicost);
+						VideoGame vg = new VideoGame(0, name, credicost, console);
 						
 						if(admin.addVideoGame(vg))
 							JOptionPane.showMessageDialog(null, "videoGame added successfully !", null, JOptionPane.INFORMATION_MESSAGE);

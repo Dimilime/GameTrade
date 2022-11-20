@@ -21,9 +21,8 @@ public class VideoGameDAO extends DAO<VideoGame> {
 			stmt.setString(cpt++, videoGame.getName());
 			stmt.setInt(cpt++, videoGame.getCrediCost());
 			stmt.setString(cpt++, videoGame.getConsole());
-			stmt.executeUpdate();
 			
-			return true;
+			return stmt.executeUpdate()>0;
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -68,7 +67,27 @@ public class VideoGameDAO extends DAO<VideoGame> {
 
 	@Override
 	public VideoGame find(int id) {
-		return null;
+		String req = "Select * from videoGame where idVideoGame=?;";
+		VideoGame videoGame=null;
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			
+			stmt.setInt(1, id);
+			try(ResultSet res = stmt.executeQuery()) {
+				if(res.next()) {
+					int idVideoGame = res.getInt(1);
+					String name= res.getString(2);
+					int creditCost = res.getInt(3);
+					String console = res.getString(4);
+					videoGame = new VideoGame(idVideoGame, name, creditCost, console);
+				}		
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Error videogame not found!");
+		}
+		
+		return videoGame;
 	}
 
 	@Override
@@ -79,9 +98,9 @@ public class VideoGameDAO extends DAO<VideoGame> {
 		{
 			try (ResultSet res = stmt.executeQuery(req))
 			{
+				videoGames = new ArrayList<>();
 				while(res.next()) {
-					VideoGame vg = new VideoGame(res.getInt("idVideoGame"), res.getString("name"), res.getString("console"), res.getInt("creditCost"));
-					videoGames = new ArrayList<>();
+					VideoGame vg = new VideoGame(res.getInt("idVideoGame"), res.getString("name"),  res.getInt("creditCost"),res.getString("console"));
 					videoGames.add(vg);
 				}
 				

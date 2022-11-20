@@ -66,8 +66,12 @@ public class Copy implements Serializable {
 		return ((CopyDAO)copyDAO).getVideoGameCopies(vg);
 	}
 	
-	public boolean isAvailable() {
-		return false;
+	public boolean isAvailable(Player p) {
+		return ((CopyDAO)copyDAO).isAvailable(this,p);
+	}
+	
+	public void borrow() {
+		
 	}
 	
 

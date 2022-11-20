@@ -5,9 +5,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
-import be.souk.models.Admin;
 import be.souk.models.Player;
-import be.souk.models.User;
 
 public class PlayerDAO extends DAO<Player>  {
 
@@ -41,9 +39,8 @@ public class PlayerDAO extends DAO<Player>  {
 				stmt2.setDate(cpt++, Date.valueOf(player.getDateOfBirth()));
 				stmt2.setDate(cpt++, Date.valueOf(player.getRegistrationDate()));
 				stmt2.setInt(cpt++, player.getCredit());
-				stmt2.executeUpdate();
 				
-				return true;
+				return stmt2.executeUpdate()>0;
 			}
 			
 		}catch(SQLException e) {
@@ -62,13 +59,13 @@ public class PlayerDAO extends DAO<Player>  {
 	public boolean update(Player player) {
 		
 		String req = "UPDATE player"
-				+ "	  SET credit = credit+2 WHERE idUser=?";
+				+ "	  SET credit = ? WHERE idUser=?";
 		
 		try(PreparedStatement stmt = connect.prepareStatement(req)) {
-			stmt.setInt(1, player.getIdUser());
+			stmt.setInt(1, player.getCredit());
+			stmt.setInt(2, player.getIdUser());
 			
-			if(stmt.executeUpdate() > 0)
-				return true;
+			return stmt.executeUpdate() > 0;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

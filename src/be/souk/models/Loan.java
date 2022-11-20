@@ -3,9 +3,15 @@ package be.souk.models;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import be.souk.dao.AbstractDAOFactory;
+import be.souk.dao.DAO;
+
 public class Loan implements Serializable {
 
 	private static final long serialVersionUID = 4398522355874576768L;
+	
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<Loan> loanDAO = adf.getLoanDAO();
 	
 	private int idLoan;
 	private LocalDate startDate;
@@ -81,6 +87,9 @@ public class Loan implements Serializable {
 		this.copy = copy;
 	}
 	
+	public boolean borrowing() {
+		return loanDAO.create(this);
+	}
 	
 	
 	

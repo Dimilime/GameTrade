@@ -2,6 +2,11 @@ package be.souk.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+
+import be.souk.dao.AbstractDAOFactory;
+import be.souk.dao.BookingDAO;
+import be.souk.dao.DAO;
 
 public class Booking implements Serializable{
 
@@ -10,12 +15,17 @@ public class Booking implements Serializable{
 	private int idBooking;
 	private LocalDate bookingDate;
 	private Player borrower;
+	private long nbWeek;
 	private VideoGame videoGame;
 	
-	public Booking(int idBooking, LocalDate bookingDate, Player borrower, VideoGame videoGame) {
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<Booking> bookingDAO = adf.getBookingDAO();
+	
+	public Booking(int idBooking, LocalDate bookingDate, Player borrower, VideoGame videoGame, long nbWeek) {
 		this.idBooking = idBooking;
 		this.bookingDate = bookingDate;
 		this.borrower = borrower;
+		this.nbWeek = nbWeek;
 		this.videoGame = videoGame;
 	}
 
@@ -50,7 +60,22 @@ public class Booking implements Serializable{
 	public void setVideoGame(VideoGame videoGame) {
 		this.videoGame = videoGame;
 	}
+
+	public long getNbWeek() {
+		return nbWeek;
+	}
+
+	public void setNbWeek(long nbWeek) {
+		this.nbWeek = nbWeek;
+	}
 	
+	public boolean book() {
+		return bookingDAO.create(this);
+	}
+	
+	public ArrayList<Booking> getBorrowerBookings(Player p){
+		return ((BookingDAO)bookingDAO).getBorrowerBookings(p);
+	}
 	
 	
 	

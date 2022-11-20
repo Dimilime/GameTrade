@@ -19,11 +19,11 @@ public class VideoGame implements Serializable {
 	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
 	private static DAO<VideoGame> videoGameDAO = adf.getVideoGameDAO();
 	
-	public VideoGame(int idVideoGame, String name, String console, int crediCost) {
+	public VideoGame(int idVideoGame, String name, int crediCost, String console ) {
 		this.idVideoGame = idVideoGame;
 		this.name = name;
-		this.console = console;
 		this.crediCost = crediCost;
+		this.console = console;
 		copies = new ArrayList<>();
 	}
 	
@@ -69,14 +69,18 @@ public class VideoGame implements Serializable {
 		return videoGameDAO.findAll();
 	}
 	
-	public Copy copyAvailable() {
-		
-		for (Copy copy : copies) {
-			if(copy.isAvailable())
-				return copy;
-		}
+	public Copy copyAvailable(Player p) {
+		if(copies !=null)
+			for (Copy copy : copies) {
+				if(copy.isAvailable(p))
+					return copy;
+			}
 		return null;
 		
+	}
+	
+	public static VideoGame getVideoGame(int id) {
+		return videoGameDAO.find(id);
 	}
 
 	
