@@ -36,10 +36,9 @@ public class VideoGameDAO extends DAO<VideoGame> {
 				+ "	  WHERE idVideoGame=?";
 		
 		try(PreparedStatement stmt = connect.prepareStatement(req)) {
-			stmt.setInt(1, videoGame.getIdVideoGame());
 			
-			if(stmt.executeUpdate() > 0)
-				return true;
+			stmt.setInt(1, videoGame.getIdVideoGame());
+			return stmt.executeUpdate() > 0;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -1,6 +1,7 @@
 package be.souk.models;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.*;
@@ -51,9 +52,27 @@ public abstract class User implements Serializable{
 	public  static User getUser(String username) {
 		return ((UserDAO)userDAO).getUser(username);
 	}
-	public  boolean checkUserPassword() {
+	public  boolean login() {
 		return ((UserDAO)userDAO).checkUserPassword(this);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(idUser, password, userName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof User))
+			return false;
+		User other = (User) obj;
+		return idUser == other.idUser && Objects.equals(password, other.password)
+				&& Objects.equals(userName, other.userName);
+	}
+	
+	
 	
 
 	

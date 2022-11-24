@@ -2,6 +2,8 @@ package be.souk.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.DAO;
@@ -53,7 +55,8 @@ public class VideoGame implements Serializable {
 	}
 	
 	public ArrayList<Copy> getCopies() {
-		return copies = Copy.getVideoGameCopies(this) ;
+		//filter the collection, get videoGame copies
+		return copies = Copy.getAll().stream().filter(copy -> copy.getVideoGame().equals(this)).collect(Collectors.toCollection(ArrayList::new));
 	}
 	
 	@Override
@@ -61,6 +64,23 @@ public class VideoGame implements Serializable {
 		return "VideoGame [idVideoGame=" + idVideoGame + ", name=" + name + ", console=" + console + ", crediCost="
 				+ crediCost + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(console, copies, crediCost, idVideoGame, name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof VideoGame))
+			return false;
+		VideoGame other = (VideoGame) obj;
+		return Objects.equals(console, other.console) && Objects.equals(copies, other.copies)
+				&& crediCost == other.crediCost && idVideoGame == other.idVideoGame && Objects.equals(name, other.name);
+	}
+
 	public boolean update() {
 		return videoGameDAO.update(this);
 	}
@@ -71,11 +91,8 @@ public class VideoGame implements Serializable {
 	
 	public Copy copyAvailable(Player p) {
 		if(copies !=null)
-			for (Copy copy : copies) {
-				if(copy.isAvailable(p))
-					return copy;
-			}
-		return null;
+			return copies.stream().filter(copy -> !copy.getOwner().equals(p)).findFirst().orElse(null);//find first copy that not belong to the player (p)
+		return null;//if no copy available return null
 		
 	}
 	

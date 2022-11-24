@@ -1,9 +1,12 @@
 package be.souk.dao;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
+import be.souk.models.Copy;
 import be.souk.models.Loan;
+import be.souk.models.Player;
 
 public class LoanDAO extends DAO<Loan>  {
 
@@ -40,6 +43,18 @@ public class LoanDAO extends DAO<Loan>  {
 
 	@Override
 	public boolean update(Loan loan) {
+		String req = "UPDATE loan"
+				+ "	  SET onGoing = ? WHERE idLoan=?";
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			stmt.setBoolean(1, loan.isOngoing());
+			stmt.setInt(2, loan.getIdLoan());
+			
+			return stmt.executeUpdate() > 0;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
@@ -50,7 +65,30 @@ public class LoanDAO extends DAO<Loan>  {
 
 	@Override
 	public ArrayList<Loan> findAll() {
-		return null;
+		String req = "select * from Loan ";
+		ArrayList<Loan> loans =null;
+		try (Statement stmt = connect.createStatement())
+		{
+			try (ResultSet res = stmt.executeQuery(req))
+			{
+				loans = new ArrayList<>();
+				while(res.next()) {
+					int idLoan = res.getInt("idLoan");
+					LocalDate startDate = res.getDate("startDate").toLocalDate();
+					LocalDate endDate = res.getDate("endDate").toLocalDate();
+					boolean onGoing = res.getBoolean("onGoing");
+					Player borrower = Player.getPlayer(res.getInt("borrower"));
+					Player lender = Player.getPlayer(res.getInt("lender"));
+					Copy copy = Copy.getCopy(res.getInt("idCopy"));
+					Loan loan = new Loan(idLoan, startDate, endDate, onGoing, borrower, lender, copy);
+					loans.add(loan);
+				}
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return loans;
 	}
 
 }

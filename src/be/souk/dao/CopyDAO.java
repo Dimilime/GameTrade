@@ -1,6 +1,7 @@
 package be.souk.dao;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import be.souk.models.Copy;
@@ -44,54 +45,67 @@ public class CopyDAO extends DAO<Copy> {
 
 	@Override
 	public Copy find(int id) {
-		return null;
+		String req = "Select * from copy where idCopy=?;";
+		Copy copy=null;
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			
+			stmt.setInt(1, id);
+			try(ResultSet res = stmt.executeQuery()) {
+				if(res.next()) {
+					int idCopy = res.getInt(1);
+					VideoGame vg= VideoGame.getVideoGame(res.getInt(2)) ;
+					Player p = Player.getPlayer(res.getInt(3));
+					
+					copy = new Copy(idCopy, vg, p);
+				}		
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Error copy not found!");
+		}
+		
+		return copy;
 	}
 
 	@Override
 	public ArrayList<Copy> findAll() {
-		return null;
-	}
-	
-	public ArrayList<Copy> getVideoGameCopies(VideoGame vg){
-
-		ArrayList<Copy> copies = null;
-		String req = "SELECT Copy.idCopy, Copy.idVideoGame, Copy.idUser "
-				+ "FROM Copy "
-				+ "WHERE Copy.idVideoGame=?;";
 		
-		try (PreparedStatement stmt = connect.prepareStatement(req))
+		String req = "select * from Copy";
+		ArrayList<Copy> copies =null;
+		try (Statement stmt = connect.createStatement())
 		{
-			stmt.setInt(1, vg.getIdVideoGame());
-			try (ResultSet res = stmt.executeQuery())
+			try (ResultSet res = stmt.executeQuery(req))
 			{
 				copies = new ArrayList<>();
 				while(res.next()) {
-					Player player = Player.getPlayer(res.getInt(3));
-					Copy copy = new Copy(res.getInt(1), vg, player);
-					copies.add(copy);
+					VideoGame vg = VideoGame.getVideoGame(res.getInt("idVideoGame"));
+					Player owner = Player.getPlayer(res.getInt("owner"));
+					Copy c = new Copy(res.getInt("idCopy"), vg , owner);
+					copies.add(c);
 				}
 				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return copies;
 	}
 	
-	public boolean isAvailable(Copy copy, Player p) {
+	
+	
+	public boolean isAvailable(Copy copy) {
 		
 		String req = "SELECT Copy.idCopy, Loan.onGoing "
 				+ "FROM Copy INNER JOIN Loan ON Copy.idCopy = Loan.idCopy "
-				+ "WHERE Loan.idCopy=? and Copy.idUser=?;";
+				+ "WHERE Copy.idCopy=?;";
 		
 		
-		boolean isAvailable = false, ongoing;
+		boolean isAvailable = true, ongoing;
 		
 		try(PreparedStatement stmt = connect.prepareStatement(req)) {
 			
 			stmt.setInt(1, copy.getIdCopy());
-			stmt.setInt(2, p.getIdUser());
 			try(ResultSet res = stmt.executeQuery()) {
 				
 				if(res.next())

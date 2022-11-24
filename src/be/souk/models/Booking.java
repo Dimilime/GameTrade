@@ -73,9 +73,20 @@ public class Booking implements Serializable{
 		return bookingDAO.create(this);
 	}
 	
-	public ArrayList<Booking> getBorrowerBookings(Player p){
-		return ((BookingDAO)bookingDAO).getBorrowerBookings(p);
+	public static ArrayList<Booking> getAll(){
+		return bookingDAO.findAll();
 	}
+	public boolean delete() {
+		return bookingDAO.delete(this);
+	}
+
+	@Override
+	public String toString() {
+		return "Booking [idBooking=" + idBooking + ", bookingDate=" + bookingDate + ", borrower=" + borrower
+				+ ", nbWeek=" + nbWeek + ", videoGame=" + videoGame + "]";
+	}
+	
+	
 	
 	
 	

@@ -2,6 +2,7 @@ package be.souk.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.DAO;
@@ -90,6 +91,26 @@ public class Loan implements Serializable {
 	public boolean borrowing() {
 		return loanDAO.create(this);
 	}
+
+	@Override
+	public String toString() {
+		return "Loan [idLoan=" + idLoan + ", startDate=" + startDate + ", endDate=" + endDate + ", ongoing=" + ongoing
+				+ ", borrower=" + borrower + ", lender=" + lender + ", copy=" + copy + "]";
+	}
+	
+	public static ArrayList<Loan> getAll() {
+		return loanDAO.findAll();
+	}
+	
+	public boolean endLoan() {
+		return loanDAO.update(this);
+	}
+	
+	public void calculateBalance() {
+		
+	}
+	
+	
 	
 	
 	

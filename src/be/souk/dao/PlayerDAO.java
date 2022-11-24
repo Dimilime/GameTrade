@@ -76,7 +76,8 @@ public class PlayerDAO extends DAO<Player>  {
 	@Override
 	public Player find(int id) {
 		
-		String req = "Select * from player where idUser=?;";
+		String req = "Select idUser, username, password, pseudo,dateOfBirth, registrationDate, credit"
+				+ " from player p inner join user u on p.idUser=u.idUser where idUser=?;";
 		Player player=null;
 		
 		try(PreparedStatement stmt = connect.prepareStatement(req)) {
@@ -107,24 +108,6 @@ public class PlayerDAO extends DAO<Player>  {
 		return null;
 	}
 	
-	public boolean exists(Player player) {
-		String req = "select username from user where username=?;";
-		boolean exists = false;
-		try(PreparedStatement stmt = connect.prepareStatement(req)) {
-			stmt.setString(1, player.getUserName());
-			try(ResultSet res = stmt.executeQuery()) {
-				exists = res.next();
-			}
-						
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return exists;
-	}
-	
-	
-	
 	public boolean bonusAdded(Player player) {
 		String req = "select bonusAdded from player where idUser=?;";
 		boolean added = false;
@@ -135,8 +118,7 @@ public class PlayerDAO extends DAO<Player>  {
 				if(res.next()) {
 					added = res.getBoolean("bonusAdded");
 				}
-			}
-						
+			}	
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

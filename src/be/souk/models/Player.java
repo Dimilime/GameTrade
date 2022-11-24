@@ -3,6 +3,7 @@ package be.souk.models;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import be.souk.dao.*;
 
@@ -15,6 +16,7 @@ public class Player extends User implements Serializable {
 	private LocalDate registrationDate;
 	private int credit;
 	private ArrayList<Booking> bookings;
+	private ArrayList<Loan> loans;
 	
 	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
 	private static DAO<Player> playerDAO = adf.getPlayerDAO();
@@ -55,7 +57,7 @@ public class Player extends User implements Serializable {
 	}
 
 	public ArrayList<Booking> getBookings() {
-		return bookings;
+		return bookings = getBorrowerBookings();
 	}
 
 	public void setBookings(ArrayList<Booking> bookings) {
@@ -70,14 +72,18 @@ public class Player extends User implements Serializable {
 		this.credit = credit;
 	}
 	
-	public void signUp() {
-		playerDAO.create(this);
+	public ArrayList<Loan> getLoans() {
+		return getLenderLoans();
 	}
 
-	public boolean exists() {
-		
-		return ((PlayerDAO)playerDAO).exists(this);
+	public void setLoans(ArrayList<Loan> loans) {
+		this.loans = loans;
 	}
+
+	public boolean signUp() {
+		return playerDAO.create(this);
+	}
+
 	
 	public void addBirthdayBonus() {
 		 
@@ -106,10 +112,71 @@ public class Player extends User implements Serializable {
 		return playerDAO.update(this);
 	}
 	
-	public boolean cancelBooking() {
-		//s'il cancel on lui resititue les credits qu'il a utilisé pour la réservation en récupérant le coup du jeu video pourlequel il fait la reservation
-		return false;
+	public boolean cancelBooking(int index) {
+		return bookings.get(index).delete();
 	}
+	
+	public boolean loanAllowed(VideoGame vg) {
+		return credit>= vg.getCrediCost();
+	}
+	
+	public boolean hasEnoughToBorrow(VideoGame vg, int nbWeek) {
+		return credit >= vg.getCrediCost()*nbWeek;
+	}
+	
+	public void editCredit(int nb) {
+		credit+=nb;
+	}
+	
+	private ArrayList<Booking> getBorrowerBookings() {
+		ArrayList<Booking> borrowerBookings = new ArrayList<>();
+		for(Booking booking : Booking.getAll()) {
+			if(booking.getBorrower().equals(this))
+				borrowerBookings.add(booking);
+		}
+		return borrowerBookings;
+	}
+	private ArrayList<Loan> getLenderLoans() {
+		ArrayList<Loan> lenderLoans = new ArrayList<>();
+		for(Loan loan : Loan.getAll()) {
+			if(loan.getLender().equals(this) && loan.isOngoing())
+				lenderLoans.add(loan);
+		}
+		return lenderLoans;
+	}
+
+	@Override
+	public String toString() {
+		return "Player [pseudo=" + pseudo + ", dateOfBirth=" + dateOfBirth + ", registrationDate=" + registrationDate
+				+ ", credit=" + credit + ", bookings=" + bookings + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		
+		return super.hashCode() + Objects.hash(bookings, credit, dateOfBirth, loans, pseudo, registrationDate);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (!(obj instanceof Player))
+			return false;
+		Player other = (Player) obj;
+		return Objects.equals(bookings, other.bookings) && credit == other.credit
+				&& Objects.equals(dateOfBirth, other.dateOfBirth) && Objects.equals(loans, other.loans)
+				&& Objects.equals(pseudo, other.pseudo) && Objects.equals(registrationDate, other.registrationDate);
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

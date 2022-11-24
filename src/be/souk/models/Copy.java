@@ -62,17 +62,28 @@ public class Copy implements Serializable {
 		return copyDAO.create(this);
 	}
 	
-	public static ArrayList<Copy> getVideoGameCopies(VideoGame vg) {
-		return ((CopyDAO)copyDAO).getVideoGameCopies(vg);
-	}
-	
-	public boolean isAvailable(Player p) {
-		return ((CopyDAO)copyDAO).isAvailable(this,p);
+	public boolean isAvailable() {
+		return ((CopyDAO)copyDAO).isAvailable(this);
 	}
 	
 	public void borrow() {
 		
 	}
+	
+	public static ArrayList<Copy> getAll(){
+		return copyDAO.findAll();
+	}
+	public static Copy getCopy(int id) {
+		return copyDAO.find(id);
+	}
+
+
+	@Override
+	public String toString() {
+		return "Copy [idCopy=" + idCopy + ", videoGame=" + videoGame + ", owner=" + owner + ", loan=" + loan + "]";
+	}
+	
+	
 	
 
 }

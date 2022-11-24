@@ -121,13 +121,12 @@ public class Signin extends JFrame {
 				username = txtfUserName.getText();
 				password = String.valueOf(passwordField.getPassword());
 				
-				
 				User user = User.getUser(username);
 				
 				
 				if(user != null) {
 					user.setPassword(password);
-					if(user.checkUserPassword()) {
+					if(user.login()) {
 						if(user instanceof Admin a) {
 							AdminInterface adminInterface = new AdminInterface(a);
 							adminInterface.setVisible(true);

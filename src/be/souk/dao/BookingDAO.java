@@ -1,6 +1,7 @@
 package be.souk.dao;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import be.souk.models.Booking;
@@ -34,7 +35,18 @@ public class BookingDAO extends DAO<Booking> {
 	}
 
 	@Override
-	public boolean delete(Booking obj) {
+	public boolean delete(Booking booking) {
+		String req = "DELETE FROM booking"
+				+ "	  WHERE idBooking=?";
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			
+			stmt.setInt(1, booking.getIdBooking());
+			return stmt.executeUpdate() > 0;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
@@ -50,32 +62,30 @@ public class BookingDAO extends DAO<Booking> {
 
 	@Override
 	public ArrayList<Booking> findAll() {
-		return null;
-	}
-	
-	public ArrayList<Booking> getBorrowerBookings(Player borrower){
-		
-		ArrayList<Booking> bookings = null;
-		
-		String req = "SELECT * FROM Booking WHERE borrower=?";
-		
-		try (PreparedStatement stmt = connect.prepareStatement(req))
+		String req = "select * from booking ";
+		ArrayList<Booking> bookings =null;
+		try (Statement stmt = connect.createStatement())
 		{
-			stmt.setInt(1, borrower.getIdUser());
-			try (ResultSet res = stmt.executeQuery())
+			try (ResultSet res = stmt.executeQuery(req))
 			{
 				bookings = new ArrayList<>();
 				while(res.next()) {
-					VideoGame videoGame = VideoGame.getVideoGame(res.getInt("idVideoGame"));
-					Booking booking = new Booking(res.getInt("idBooking"), res.getDate("bookingDate").toLocalDate(), borrower, videoGame, res.getLong("nbWeek"));
-					bookings.add(booking);
+					int idBooking = res.getInt("idBooking");
+					LocalDate bookingDate = res.getDate("bookingDate").toLocalDate();
+					Player p = Player.getPlayer(res.getInt("borrower"));
+					VideoGame vg = VideoGame.getVideoGame(res.getInt("idVideoGame"));
+					long nbWeek = res.getLong("nbWeek");
+					Booking bk = new Booking(idBooking, bookingDate, p, vg, nbWeek);
+					bookings.add(bk);
 				}
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return bookings;
 	}
+	
+	
 
 }

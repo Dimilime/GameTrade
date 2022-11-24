@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import be.souk.models.Player;
+import be.souk.models.User;
+
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.ItemListener;
@@ -158,10 +160,10 @@ public class Signup extends JFrame {
 				p.setRegistrationDate(LocalDate.now());
 				p.setCredit(10);
 				p.setDateOfBirth( LocalDate.parse(dob, formatter) );
-				if(!p.exists())
+				if(User.getUser(username) == null)
 				{
-					p.signUp();
-					JOptionPane.showMessageDialog(Signup.this, "You have successfully registered!");
+					if (p.signUp())
+						JOptionPane.showMessageDialog(Signup.this, "You have successfully registered!");
 					dateField.setText("");
 					txtfPseudo.setText("");
 					txtfUserName.setText("");
@@ -224,9 +226,6 @@ public class Signup extends JFrame {
 		});
 		btnGoBack.setBounds(449, 10, 105, 39);
 		contentPane.add(btnGoBack);
-		
-
-		
 	}
 	
 	DocumentListener signupListener = new DocumentListener() {
