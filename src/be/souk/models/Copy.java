@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import be.souk.dao.AbstractDAOFactory;
-import be.souk.dao.CopyDAO;
 import be.souk.dao.DAO;
 
 public class Copy implements Serializable {
@@ -14,16 +13,18 @@ public class Copy implements Serializable {
 	private int idCopy;
 	private VideoGame videoGame;
 	private Player owner;
+	private boolean isAvailable;
 	private Loan loan;
 	
 	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
 	private static DAO<Copy> copyDAO = adf.getCopyDAO();
 	
-	public Copy(int idCopy, VideoGame videoGame, Player owner) {
+	public Copy(int idCopy, VideoGame videoGame, Player owner, boolean isAvailable) {
 		this.idCopy = idCopy;
 		this.videoGame = videoGame;
 		this.owner = owner;
-	}
+		this.isAvailable = isAvailable;
+		}
 
 	
 	public int getIdCopy() {
@@ -50,6 +51,15 @@ public class Copy implements Serializable {
 		this.owner = owner;
 	}
 
+	public void setAvailable(boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
+	
+	public boolean isAvailable() {
+		return isAvailable;
+	}
+
+
 	public Loan getLoan() {
 		return loan;
 	}
@@ -58,12 +68,21 @@ public class Copy implements Serializable {
 		this.loan = loan;
 	}
 	
-	public boolean putOnLoan() {
+	public boolean add() {
 		return copyDAO.create(this);
 	}
 	
-	public boolean isAvailable() {
-		return ((CopyDAO)copyDAO).isAvailable(this);
+	
+	
+	public boolean releaseCopy() {
+		isAvailable = true;
+		videoGame.selectBooking();
+		return copyDAO.update(this);
+	}
+	
+	public void copyOnLoan() {
+		isAvailable= false;
+		copyDAO.update(this);
 	}
 	
 	public void borrow() {
@@ -75,6 +94,10 @@ public class Copy implements Serializable {
 	}
 	public static Copy getCopy(int id) {
 		return copyDAO.find(id);
+	}
+	
+	public boolean delete() {
+		return copyDAO.delete(this);
 	}
 
 

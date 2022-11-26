@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import be.souk.models.Booking;
+import be.souk.models.Copy;
 import be.souk.models.Player;
 import be.souk.models.VideoGame;
 
@@ -57,13 +58,35 @@ public class BookingDAO extends DAO<Booking> {
 
 	@Override
 	public Booking find(int id) {
-		return null;
+		String req = "Select * from booking where idBooking=?;";
+		Booking booking=null;
+		PlayerDAO playerDAO = new PlayerDAO(connect);
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			
+			stmt.setInt(1, id);
+			try(ResultSet res = stmt.executeQuery()) {
+				if(res.next()) {
+					Player p = playerDAO.find(res.getInt("borrower"));
+					LocalDate bookingDate = res.getDate("bookingDate").toLocalDate();
+					long nbWeek = res.getLong("nbWeek");
+					booking = new Booking(id, bookingDate, p, null, nbWeek);
+				}		
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Error booking not found!");
+		}
+		
+		return booking;
 	}
 
 	@Override
 	public ArrayList<Booking> findAll() {
 		String req = "select * from booking ";
 		ArrayList<Booking> bookings =null;
+		PlayerDAO playerDAO = new PlayerDAO(connect);
+		VideoGameDAO videoGameDAO = new VideoGameDAO(connect);
 		try (Statement stmt = connect.createStatement())
 		{
 			try (ResultSet res = stmt.executeQuery(req))
@@ -72,8 +95,8 @@ public class BookingDAO extends DAO<Booking> {
 				while(res.next()) {
 					int idBooking = res.getInt("idBooking");
 					LocalDate bookingDate = res.getDate("bookingDate").toLocalDate();
-					Player p = Player.getPlayer(res.getInt("borrower"));
-					VideoGame vg = VideoGame.getVideoGame(res.getInt("idVideoGame"));
+					Player p = playerDAO.find(res.getInt("borrower"));
+					VideoGame vg = videoGameDAO.find(res.getInt("idVideoGame"));
 					long nbWeek = res.getLong("nbWeek");
 					Booking bk = new Booking(idBooking, bookingDate, p, vg, nbWeek);
 					bookings.add(bk);

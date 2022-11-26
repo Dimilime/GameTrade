@@ -13,9 +13,9 @@ public abstract class User implements Serializable{
 	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
 	private static DAO<User> userDAO = adf.getUserDAO();
 	
-	private int idUser;
-	private String userName;
-	private String password;
+	protected int idUser;
+	protected String userName;
+	protected String password;
 	
 	public User() {}
 	

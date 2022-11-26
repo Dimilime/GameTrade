@@ -21,6 +21,7 @@ public abstract class AbstractDAOFactory {
 	
 	public abstract DAO<VideoGame> getVideoGameDAO();
 	
+	public abstract DAO<CreditCostHistory> getCreditCostHistoryDAO();
 	
 	public static AbstractDAOFactory getFactory(int type){
 		switch(type){

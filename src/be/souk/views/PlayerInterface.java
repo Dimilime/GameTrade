@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import be.souk.models.Booking;
 import be.souk.models.Copy;
@@ -25,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.MouseAdapter;
@@ -38,17 +40,19 @@ public class PlayerInterface extends JFrame {
 	private ArrayList<Booking> bookings;
 	private ArrayList<Loan> loans;
 	private ArrayList<VideoGame> videoGames ;
+	private ArrayList<Copy> copies ;
 	private JPanel contentPane;
 	private JTable tableVideoGames;
 	private JScrollPane scrollPaneB;
 	private JScrollPane scrollPaneV;
 	private JTable tableBookings;
-	private JTable tableLoan;
+	private JTable tableLoans;
 	private JMenuBar menuBar;
 	private JButton logout;
 	private JLabel lblCredit;
 	private JTabbedPane tabbedPane;
 	private JButton btnBorrow;
+	private JTable tableCopies;
 
 	public PlayerInterface(Player player) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,11 +97,17 @@ public class PlayerInterface extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int rowSelected = tableVideoGames.getSelectedRow();
-				VideoGame vg = videoGames.get(rowSelected);
-				if(player.loanAllowed(vg)) {
-					btnBorrow.setEnabled(true);
-				}else
-					btnBorrow.setEnabled(false);
+				if(rowSelected>-1) {
+					VideoGame vg = videoGames.get(rowSelected);
+					if(player.loanAllowed(vg)) {
+						btnBorrow.setEnabled(true);
+					}else
+						btnBorrow.setEnabled(false);
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
+
+				
 			}
 		});
 		
@@ -114,6 +124,9 @@ public class PlayerInterface extends JFrame {
 						break;
 					case 2:
 						displayTableLoans(player);
+						break;
+					case 3 :
+						displayTableCopies(player);
 						break;
 				}
 				
@@ -135,22 +148,26 @@ public class PlayerInterface extends JFrame {
 		
 		scrollPaneV.setViewportView(tableVideoGames);
 		
-		JButton btnLend = new JButton("Put on loan");
-		btnLend.addActionListener(new ActionListener() {
+		JButton btnAddCopy = new JButton("Add a copy");
+		btnAddCopy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = tableVideoGames.getSelectedRow();
-				
-				VideoGame vg = videoGames.get(rowSelected);
-				Copy copy = new Copy(0, vg, player);
-				if(copy.putOnLoan())
-					JOptionPane.showMessageDialog(null, "copy added successfully !", null, JOptionPane.INFORMATION_MESSAGE);
+				if(rowSelected>-1) {
+					VideoGame vg = videoGames.get(rowSelected);
+					Copy copy = new Copy(0, vg, player, true);
+					if(copy.add())
+						JOptionPane.showMessageDialog(null, "copy added successfully !", null, JOptionPane.INFORMATION_MESSAGE);
+					else
+						JOptionPane.showMessageDialog(null, "copy not added! An error has occurred please try again", null, JOptionPane.ERROR_MESSAGE);
+				}
 				else
-					JOptionPane.showMessageDialog(null, "copy not added! An error has occurred please try again", null, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
+				
 			}
 		});
-		btnLend.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnLend.setBounds(91, 341, 241, 47);
-		VGPane.add(btnLend);
+		btnAddCopy.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnAddCopy.setBounds(91, 341, 241, 47);
+		VGPane.add(btnAddCopy);
 		
 		btnBorrow = new JButton("Borrow");
 		btnBorrow.addActionListener(new ActionListener() {
@@ -187,20 +204,11 @@ public class PlayerInterface extends JFrame {
 						}
 					}while(error);
 					
-					vg.getCopies();
-					
 					Copy copy = vg.copyAvailable(player);
-					
 					if(copy!=null && nbweek >0) {
 						Loan loan = new Loan(0, LocalDate.now(), LocalDate.now().plusWeeks(nbweek), true, player, copy.getOwner(), copy);
 						
 						if(loan.borrowing()) {
-//							player.editCredit(-vg.getCrediCost());//debit the borrower for the first week
-//							player.update();
-//							lblCredit.setText("Credit(s): "+ player.getCredit()+ "  ");
-//							Player owner = copy.getOwner();
-//							owner.editCredit(+vg.getCrediCost());//crediting the lender
-//							owner.update();
 							JOptionPane.showMessageDialog(null,"loan added successfully !", null, JOptionPane.INFORMATION_MESSAGE);
 						}   
 						else
@@ -247,8 +255,12 @@ public class PlayerInterface extends JFrame {
 		btnCancelBooking.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = tableBookings.getSelectedRow();
-				player.cancelBooking(rowSelected);
-				displayTableBookings(player);
+				if(rowSelected>-1) {
+					player.cancelBooking(rowSelected);
+					displayTableBookings(player);
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
 //				player.editCredit(+bookings.get(rowSelected).getVideoGame().getCrediCost());//repayment of credits
 //				player.update();
 //				
@@ -269,22 +281,63 @@ public class PlayerInterface extends JFrame {
 		scrollPaneL.setBounds(32, 46, 654, 299);
 		loansPane.add(scrollPaneL);
 		
-		tableLoan = new JTable();
-		scrollPaneL.setViewportView(tableLoan);
+		tableLoans = new JTable();
+		scrollPaneL.setViewportView(tableLoans);
 		
 		JButton btnEndLoan = new JButton("End Loan");
 		btnEndLoan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				int rowSelected = tableBookings.getSelectedRow();
-				loans.get(rowSelected).setOngoing(false);
-				loans.get(rowSelected).endLoan();
-				displayTableLoans(player);
+				int rowSelected = tableLoans.getSelectedRow();
+				if(rowSelected>-1) {
+					Loan loan= loans.get(rowSelected);
+					if(loan.endLoan())
+						JOptionPane.showMessageDialog(null, "Loan ended!", null, JOptionPane.INFORMATION_MESSAGE);
+					else
+						JOptionPane.showMessageDialog(null, "Error loan not ended correctly", null, JOptionPane.ERROR_MESSAGE);
+					displayTableLoans(player);
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
+					
+				
 			}
 		});
 		btnEndLoan.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnEndLoan.setBounds(242, 355, 224, 39);
 		loansPane.add(btnEndLoan);
+		
+		JPanel copiesPane = new JPanel();
+		copiesPane.setLayout(null);
+		tabbedPane.addTab("My Copies", null, copiesPane, null);
+		
+		JScrollPane scrollPaneC = new JScrollPane();
+		scrollPaneC.setBounds(32, 46, 654, 299);
+		copiesPane.add(scrollPaneC);
+		
+		tableCopies = new JTable();
+		scrollPaneC.setViewportView(tableCopies);
+		
+		JButton btnDeletecopy = new JButton("Delete");
+		btnDeletecopy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int rowSelected = tableCopies.getSelectedRow();
+				if(rowSelected>-1) {
+					if(copies.get(rowSelected).delete())
+						JOptionPane.showMessageDialog(null,"copy deleted successfully !", null, JOptionPane.INFORMATION_MESSAGE);
+					else
+						JOptionPane.showMessageDialog(null,"error copy not deleted, probably still on loan!", null, JOptionPane.ERROR_MESSAGE);
+					displayTableCopies(player);
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
+				
+			}
+		});
+		btnDeletecopy.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnDeletecopy.setBounds(242, 355, 224, 39);
+		copiesPane.add(btnDeletecopy);
 	}
 	
 	
@@ -302,6 +355,11 @@ public class PlayerInterface extends JFrame {
 		};
 		model.setColumnIdentifiers(colName);
 		tableVideoGames.setModel(model);
+		tableVideoGames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		TableColumnModel cModel= tableVideoGames.getColumnModel();
+		cModel.getColumn(0).setPreferredWidth(200);
+		cModel.getColumn(1).setPreferredWidth(50);
+		cModel.getColumn(2).setPreferredWidth(50);
 		
 		for (VideoGame vg : videoGames) {
 			String name, creditCost, console;
@@ -327,6 +385,7 @@ public class PlayerInterface extends JFrame {
 		String[] colName = { "Booking date", "VideoGame", "Number of weeks"};
 		model.setColumnIdentifiers(colName);
 		tableBookings.setModel(model);
+		tableBookings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		for (Booking bk : bookings) {
 			String date, videoGame, nbWeek;
@@ -350,7 +409,8 @@ public class PlayerInterface extends JFrame {
 		
 		String[] colName = { "Start Date", "End Date", "Borrower", "VideoGame"};
 		modelLoan.setColumnIdentifiers(colName);
-		tableLoan.setModel(modelLoan);
+		tableLoans.setModel(modelLoan);
+		tableLoans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		for (Loan loan : loans) {
 			String startDate,endDate, borrower, videoGame;
@@ -359,6 +419,29 @@ public class PlayerInterface extends JFrame {
 			borrower = loan.getBorrower().getUserName();
 			videoGame = loan.getCopy().getVideoGame().getName();
 			modelLoan.addRow(new String[] {startDate,endDate,borrower,videoGame});
+		}
+	}
+	public void displayTableCopies(Player player) {
+		copies  = player.getCopies();
+		DefaultTableModel modelLoan = new DefaultTableModel() {
+			private static final long serialVersionUID = 1871578459627816924L;
+			
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		
+		String[] colName = {"VideoGame", "Console"};
+		modelLoan.setColumnIdentifiers(colName);
+		tableCopies.setModel(modelLoan);
+		tableCopies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		for (Copy copy : copies) {
+			String videoGame, console;
+			videoGame = copy.getVideoGame().getName();
+			console = copy.getVideoGame().getConsole();
+			modelLoan.addRow(new String[] {videoGame, console});
 		}
 	}
 }

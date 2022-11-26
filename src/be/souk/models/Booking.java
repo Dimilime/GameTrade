@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import be.souk.dao.AbstractDAOFactory;
-import be.souk.dao.BookingDAO;
 import be.souk.dao.DAO;
 
 public class Booking implements Serializable{

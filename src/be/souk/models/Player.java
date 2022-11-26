@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import be.souk.dao.*;
 
@@ -17,6 +18,7 @@ public class Player extends User implements Serializable {
 	private int credit;
 	private ArrayList<Booking> bookings;
 	private ArrayList<Loan> loans;
+	private ArrayList<Copy> copies;
 	
 	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
 	private static DAO<Player> playerDAO = adf.getPlayerDAO();
@@ -57,7 +59,9 @@ public class Player extends User implements Serializable {
 	}
 
 	public ArrayList<Booking> getBookings() {
-		return bookings = getBorrowerBookings();
+		return bookings = Booking.getAll().stream()
+				.filter(booking -> booking.getBorrower().getIdUser() == idUser)
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	public void setBookings(ArrayList<Booking> bookings) {
@@ -73,11 +77,23 @@ public class Player extends User implements Serializable {
 	}
 	
 	public ArrayList<Loan> getLoans() {
-		return getLenderLoans();
+		return loans= Loan.getAll().stream()
+				.filter(loan-> loan.getLender().getIdUser() == idUser && loan.isOngoing())
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	public void setLoans(ArrayList<Loan> loans) {
 		this.loans = loans;
+	}
+
+	public ArrayList<Copy> getCopies() {
+		return copies = Copy.getAll().stream()
+				.filter(c-> c.getOwner().getIdUser() == idUser)
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	public void setCopies(ArrayList<Copy> copies) {
+		this.copies = copies;
 	}
 
 	public boolean signUp() {
@@ -88,13 +104,12 @@ public class Player extends User implements Serializable {
 	public void addBirthdayBonus() {
 		 
 		if(checkDateForBonus()) {
-			
 		}
 	}
 	
 	private boolean checkDateForBonus() {
 		
-		//get his birdthday og this year
+		//get his birdthday of this year
 		LocalDate birthday = LocalDate.of(LocalDate.now().getYear(), dateOfBirth.getMonth(), dateOfBirth.getDayOfMonth());
 		return false;
 	}
@@ -128,23 +143,6 @@ public class Player extends User implements Serializable {
 		credit+=nb;
 	}
 	
-	private ArrayList<Booking> getBorrowerBookings() {
-		ArrayList<Booking> borrowerBookings = new ArrayList<>();
-		for(Booking booking : Booking.getAll()) {
-			if(booking.getBorrower().equals(this))
-				borrowerBookings.add(booking);
-		}
-		return borrowerBookings;
-	}
-	private ArrayList<Loan> getLenderLoans() {
-		ArrayList<Loan> lenderLoans = new ArrayList<>();
-		for(Loan loan : Loan.getAll()) {
-			if(loan.getLender().equals(this) && loan.isOngoing())
-				lenderLoans.add(loan);
-		}
-		return lenderLoans;
-	}
-
 	@Override
 	public String toString() {
 		return "Player [pseudo=" + pseudo + ", dateOfBirth=" + dateOfBirth + ", registrationDate=" + registrationDate

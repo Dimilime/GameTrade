@@ -2,7 +2,10 @@ package be.souk.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.DAO;
@@ -23,6 +26,7 @@ public class Loan implements Serializable {
 	private Copy copy;
 	
 	public Loan(int idLoan, LocalDate startDate, LocalDate endDate, boolean ongoing, Player borrower, Player lender, Copy copy) {
+		
 		this.idLoan = idLoan;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -89,6 +93,7 @@ public class Loan implements Serializable {
 	}
 	
 	public boolean borrowing() {
+		copy.copyOnLoan();
 		return loanDAO.create(this);
 	}
 
@@ -103,12 +108,42 @@ public class Loan implements Serializable {
 	}
 	
 	public boolean endLoan() {
-		return loanDAO.update(this);
+		int loanCost = calculateBalance();
+		lender.editCredit(+loanCost);
+		borrower.editCredit(-loanCost);
+		lender.update();
+		borrower.update();
+		ongoing = false;
+		if(copy.releaseCopy()) {
+			return loanDAO.update(this);
+		}
+		
+		return false;
 	}
 	
-	public void calculateBalance() {
+	private int calculateBalance() {
+		int balance=0;
+		LocalDate receivedDate = LocalDate.now();
+		while(!startDate.equals(endDate))
+		{
+			
+			ArrayList<CreditCostHistory> latestModifieds= copy.getVideoGame().getCreditCostHistories()
+					.stream().filter(ccH -> ccH.getModificationDate().isBefore(startDate) ||ccH.getModificationDate().equals(startDate))
+					.collect(Collectors.toCollection(ArrayList::new));
+			CreditCostHistory lastModfied = latestModifieds.get(latestModifieds.size()-1);
+			balance+= lastModfied.getCreditCost();
+			
+			startDate= startDate.plusWeeks(1);
+		}
+		if(receivedDate.isAfter(endDate)) {
+			long daysBetween = ChronoUnit.DAYS.between(endDate,receivedDate);
+			balance+= 5*daysBetween;
+		}
+			
+		return balance;
 		
 	}
+	
 	
 	
 	

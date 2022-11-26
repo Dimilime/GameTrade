@@ -6,15 +6,20 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import be.souk.models.Admin;
+import be.souk.models.CreditCostHistory;
 import be.souk.models.VideoGame;
 
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
@@ -22,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -141,13 +147,18 @@ public class AdminInterface extends JFrame {
 						credicost = Integer.valueOf(txtfCreditCost.getText());
 						VideoGame vg = new VideoGame(0, name, credicost, console);
 						
-						if(admin.addVideoGame(vg))
+						if(admin.addVideoGame(vg)) {
 							JOptionPane.showMessageDialog(null, "videoGame added successfully !", null, JOptionPane.INFORMATION_MESSAGE);
+							txtfName.setText("");
+							txtfCreditCost.setText("");
+							txtfConsole.setText("");
+						}
+							
 						else
 							JOptionPane.showMessageDialog(null, "videoGame not added! An error has occurred please try again", null, JOptionPane.ERROR_MESSAGE);
 					}
 					else
-						JOptionPane.showMessageDialog(null, "Empty ", null, JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Empty field", null, JOptionPane.ERROR_MESSAGE);
 				}catch(NumberFormatException ex) {
 					JOptionPane.showMessageDialog(null, "Incorrect number format", null, JOptionPane.ERROR_MESSAGE);
 				}
@@ -183,6 +194,7 @@ public class AdminInterface extends JFrame {
 		VGPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setPreferredSize(new Dimension(654, 299));
 		scrollPane.setBounds(37, 32, 654, 299);
 		VGPane.add(scrollPane);
 		
@@ -198,7 +210,10 @@ public class AdminInterface extends JFrame {
 					int newCredit = Integer.valueOf(JOptionPane.showInputDialog("Enter the new value"));
 					VideoGame vg = videoGames.get(rowSelected);
 					vg.setCrediCost(newCredit);
-					admin.setCreditVideoGame(vg);
+					if(admin.setCreditVideoGame(vg)) {
+						JOptionPane.showMessageDialog(null, "Credit updated successfully!");
+					}
+					
 					displayTable();
 				}catch (NumberFormatException ex) {
 					JOptionPane.showMessageDialog(null, "Please enter a number");
@@ -246,8 +261,8 @@ public class AdminInterface extends JFrame {
 
 		public void warn() {
 			if(txtfName.getText().trim().length()>0)
-				if(!(txtfName.getText().length() >=2 && txtfName.getText().length() <=30)) {
-					lblErrorName.setText("Please enter a name of minimum 2 characters and maximum 30");
+				if(!(txtfName.getText().length() >=2 && txtfName.getText().length() <=50)) {
+					lblErrorName.setText("Please enter a name of minimum 2 characters and maximum 50");
 				}
 				else
 					lblErrorName.setText("");
@@ -267,8 +282,8 @@ public class AdminInterface extends JFrame {
 				lblErrorCreditCost.setText("");
 			
 			if(txtfConsole.getText().trim().length()>0)
-				if(!(txtfConsole.getText().length() >= 2 && txtfConsole.getText().length() <=30)) {
-					lblErrorConsole.setText("Please enter a name of minimum 2 characters and maximum 30");
+				if(!(txtfConsole.getText().length() >= 2 && txtfConsole.getText().length() <=50)) {
+					lblErrorConsole.setText("Please enter a name of minimum 2 characters and maximum 50");
 				}
 				else
 					lblErrorConsole.setText("");
@@ -282,8 +297,11 @@ public class AdminInterface extends JFrame {
 	
 	public void displayTable() {
 		
+		
 		model = new DefaultTableModel() {
-			
+		
+			private static final long serialVersionUID = -4824439810708676091L;
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -292,7 +310,12 @@ public class AdminInterface extends JFrame {
 		String[] colName = { "Name", "CreditCost", "Console"};
 		model.setColumnIdentifiers(colName);
 		table.setModel(model);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
+		TableColumnModel cModel= table.getColumnModel();
+		cModel.getColumn(0).setPreferredWidth(200);
+		cModel.getColumn(1).setPreferredWidth(50);
+		cModel.getColumn(2).setPreferredWidth(50);
 		videoGames  = VideoGame.getAll();
 		
 		for (VideoGame vg : videoGames) {

@@ -3,7 +3,6 @@ package be.souk.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.DAO;
@@ -11,15 +10,17 @@ import be.souk.dao.DAO;
 public class VideoGame implements Serializable {
 	
 	private static final long serialVersionUID = 7655528300555278583L;
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<VideoGame> videoGameDAO = adf.getVideoGameDAO();
 	
 	private int idVideoGame;
 	private String name;
 	private String console;
 	private int crediCost;
 	private ArrayList<Copy> copies;
+	private ArrayList<CreditCostHistory> creditCostHistories;
+	private ArrayList<Booking> bookings;
 	
-	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
-	private static DAO<VideoGame> videoGameDAO = adf.getVideoGameDAO();
 	
 	public VideoGame(int idVideoGame, String name, int crediCost, String console ) {
 		this.idVideoGame = idVideoGame;
@@ -27,6 +28,8 @@ public class VideoGame implements Serializable {
 		this.crediCost = crediCost;
 		this.console = console;
 		copies = new ArrayList<>();
+		creditCostHistories = new ArrayList<>();
+		bookings = new ArrayList<>();
 	}
 	
 	public int getIdVideoGame() {
@@ -54,15 +57,76 @@ public class VideoGame implements Serializable {
 		this.crediCost = crediCost;
 	}
 	
+	public ArrayList<Booking> getBookings() {
+		return bookings;
+	}
+
+	public void setBookings(ArrayList<Booking> bookings) {
+		this.bookings = bookings;
+	}
+
 	public ArrayList<Copy> getCopies() {
-		//filter the collection, get videoGame copies
-		return copies = Copy.getAll().stream().filter(copy -> copy.getVideoGame().equals(this)).collect(Collectors.toCollection(ArrayList::new));
+		return copies ;
 	}
 	
+	public void addCopy(Copy copy) {
+		copies.add(copy);
+	}
+	public void removeCope(Copy copy) {
+		copies.remove(copy);
+	}
+	
+	public void addCreditCostHistory(CreditCostHistory ccH) {
+		creditCostHistories.add(ccH);
+	}
+	
+	public void addBooking(Booking b) {
+		bookings.add(b);
+	}
+	
+	public void removeBooking(Booking b) {
+		bookings.remove(b);
+	}
+
+	public boolean update() {
+		return videoGameDAO.update(this);
+	}
+	
+	public static ArrayList<VideoGame> getAll(){
+		return videoGameDAO.findAll();
+	}
+	
+	public Copy copyAvailable(Player p) {
+		if(copies !=null)
+			return copies.stream().filter(copy -> !copy.getOwner().equals(p) && copy.isAvailable()).findFirst().orElse(null);//find first copy that not belong to the player (p)
+		return null;//if no copy available return null
+		
+	}
+	
+	public static VideoGame getVideoGame(int id) {
+		return videoGameDAO.find(id);
+	}
+
+	public ArrayList<CreditCostHistory> getCreditCostHistories() {
+		return creditCostHistories;
+	}
+
+	public void setCreditCostHistories(ArrayList<CreditCostHistory> creditCostHistories) {
+		this.creditCostHistories = creditCostHistories;
+	}
+	
+	public void selectBooking() {
+		
+		if(bookings.size()>0) {
+			
+		}
+		
+	}
+
 	@Override
 	public String toString() {
 		return "VideoGame [idVideoGame=" + idVideoGame + ", name=" + name + ", console=" + console + ", crediCost="
-				+ crediCost + "]";
+				+ crediCost + ", copies=" + copies + ", creditCostHistories=" + creditCostHistories + "]";
 	}
 
 	@Override
@@ -80,25 +144,7 @@ public class VideoGame implements Serializable {
 		return Objects.equals(console, other.console) && Objects.equals(copies, other.copies)
 				&& crediCost == other.crediCost && idVideoGame == other.idVideoGame && Objects.equals(name, other.name);
 	}
-
-	public boolean update() {
-		return videoGameDAO.update(this);
-	}
 	
-	public static ArrayList<VideoGame> getAll(){
-		return videoGameDAO.findAll();
-	}
-	
-	public Copy copyAvailable(Player p) {
-		if(copies !=null)
-			return copies.stream().filter(copy -> !copy.getOwner().equals(p)).findFirst().orElse(null);//find first copy that not belong to the player (p)
-		return null;//if no copy available return null
-		
-	}
-	
-	public static VideoGame getVideoGame(int id) {
-		return videoGameDAO.find(id);
-	}
 
 	
 	

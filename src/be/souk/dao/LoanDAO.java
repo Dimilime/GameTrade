@@ -38,6 +38,17 @@ public class LoanDAO extends DAO<Loan>  {
 
 	@Override
 	public boolean delete(Loan loan) {
+		String req = "DELETE FROM Loan"
+				+ "	  WHERE idLoan=?";
+		
+		try(PreparedStatement stmt = connect.prepareStatement(req)) {
+			
+			stmt.setInt(1, loan.getIdLoan());
+			return stmt.executeUpdate() > 0;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
@@ -67,6 +78,9 @@ public class LoanDAO extends DAO<Loan>  {
 	public ArrayList<Loan> findAll() {
 		String req = "select * from Loan ";
 		ArrayList<Loan> loans =null;
+		CopyDAO copyDAO = new CopyDAO(connect);
+		PlayerDAO playerDAO = new PlayerDAO(connect);
+		
 		try (Statement stmt = connect.createStatement())
 		{
 			try (ResultSet res = stmt.executeQuery(req))
@@ -77,9 +91,9 @@ public class LoanDAO extends DAO<Loan>  {
 					LocalDate startDate = res.getDate("startDate").toLocalDate();
 					LocalDate endDate = res.getDate("endDate").toLocalDate();
 					boolean onGoing = res.getBoolean("onGoing");
-					Player borrower = Player.getPlayer(res.getInt("borrower"));
-					Player lender = Player.getPlayer(res.getInt("lender"));
-					Copy copy = Copy.getCopy(res.getInt("idCopy"));
+					Player borrower = playerDAO.find(res.getInt("borrower"));
+					Player lender = playerDAO.find(res.getInt("lender"));
+					Copy copy = copyDAO.find(res.getInt("idCopy"));
 					Loan loan = new Loan(idLoan, startDate, endDate, onGoing, borrower, lender, copy);
 					loans.add(loan);
 				}

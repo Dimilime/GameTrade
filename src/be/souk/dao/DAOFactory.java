@@ -43,6 +43,11 @@ public class DAOFactory extends AbstractDAOFactory {
 	public DAO<User> getUserDAO() {
 		return new UserDAO(conn);
 	}
+
+	@Override
+	public DAO<CreditCostHistory> getCreditCostHistoryDAO() {
+		return new CreditCostHistoryDAO(conn);
+	}
 	
 	
 

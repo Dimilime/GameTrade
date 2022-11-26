@@ -76,7 +76,7 @@ public class PlayerDAO extends DAO<Player>  {
 	@Override
 	public Player find(int id) {
 		
-		String req = "Select idUser, username, password, pseudo,dateOfBirth, registrationDate, credit"
+		String req = "Select idUser, username, pseudo,dateOfBirth, registrationDate, credit"
 				+ " from player p inner join user u on p.idUser=u.idUser where idUser=?;";
 		Player player=null;
 		
@@ -87,12 +87,11 @@ public class PlayerDAO extends DAO<Player>  {
 				if(res.next()) {
 					int idUser = res.getInt(1);
 					String name= res.getString(2);
-					String password = res.getString(3);
-					String pseudo = res.getString(4);
-					LocalDate dob = res.getDate(5).toLocalDate();
-					LocalDate registrationDate = res.getDate(6).toLocalDate();
-					int credit = res.getInt(7);
-					player = new Player(idUser,name,password,pseudo,dob,registrationDate,credit);
+					String pseudo = res.getString(3);
+					LocalDate dob = res.getDate(4).toLocalDate();
+					LocalDate registrationDate = res.getDate(5).toLocalDate();
+					int credit = res.getInt(6);
+					player = new Player(idUser,name,null,pseudo,dob,registrationDate,credit);
 				}		
 			}
 			
