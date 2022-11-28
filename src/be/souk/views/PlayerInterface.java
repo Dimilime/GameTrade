@@ -286,7 +286,8 @@ public class PlayerInterface extends JFrame {
 					Loan loan= loans.get(rowSelected);
 					if(loan.endLoan()) {
 						JOptionPane.showMessageDialog(null, "Loan ended!", null, JOptionPane.INFORMATION_MESSAGE);
-						lblCredit.setText("Credit(s): "+ player.getCredit()+ "  ");
+						//just for dynamism
+						lblCredit.setText("Credit(s): "+ Player.getPlayer(player.getIdUser()).getCredit()+ "  ");
 					}
 						
 					else

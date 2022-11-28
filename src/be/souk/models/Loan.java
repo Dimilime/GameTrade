@@ -123,24 +123,16 @@ public class Loan implements Serializable {
 	private int calculateBalance() {
 		int balance=0;
 		LocalDate receivedDate = LocalDate.now();
-		LocalDate start = startDate;
 		if(receivedDate.isBefore(endDate))
 		{	//if the loan ended before the end Date, borrower don't pay the total loan cost
-			while(!start.equals(endDate)) {
-				if(startDate.plusWeeks(1).equals(receivedDate)) {
-					endDate = receivedDate;
-					break;
-				}
-				else if(startDate.isAfter(receivedDate)) {
-					endDate = receivedDate;
-					break;
-				}
-				start= start.plusWeeks(1);
-			}
-		}
-		while(!startDate.equals(endDate))
-		{
 			
+			endDate = receivedDate;
+				
+		}
+		while(!startDate.equals(endDate)  )
+		{
+			if(startDate.isAfter(endDate))
+				break;
 			ArrayList<CreditCostHistory> latestModifieds= copy.getVideoGame().getCreditCostHistories()
 					.stream().filter(ccH -> ccH.getModificationDate().isBefore(startDate) || ccH.getModificationDate().equals(startDate))
 					.collect(Collectors.toCollection(ArrayList::new));
