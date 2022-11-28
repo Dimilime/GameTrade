@@ -321,7 +321,7 @@ public class PlayerInterface extends JFrame {
 				
 				int rowSelected = tableCopies.getSelectedRow();
 				if(rowSelected>-1) {
-					if(copies.get(rowSelected).delete())
+					if(player.deleteCopy(rowSelected))
 						JOptionPane.showMessageDialog(null,"copy deleted successfully !", null, JOptionPane.INFORMATION_MESSAGE);
 					else
 						JOptionPane.showMessageDialog(null,"error copy not deleted, probably still on loan!", null, JOptionPane.ERROR_MESSAGE);

@@ -131,6 +131,9 @@ public class Player extends User implements Serializable {
 		}
 	}
 	
+	public boolean deleteCopy(int index) {
+		return copies.get(index).delete();
+	}
 	
 	public static Player getPlayer(int id) {
 		return playerDAO.find(id);
@@ -158,7 +161,7 @@ public class Player extends User implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Player [pseudo=" + pseudo + ", dateOfBirth=" + dateOfBirth + ", registrationDate=" + registrationDate
+		return super.toString()+ " Player [pseudo=" + pseudo + ", dateOfBirth=" + dateOfBirth + ", registrationDate=" + registrationDate
 				+ ", credit=" + credit + ", bookings=" + bookings + "]";
 	}
 

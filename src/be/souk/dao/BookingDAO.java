@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import be.souk.models.Booking;
-import be.souk.models.Copy;
 import be.souk.models.Player;
 import be.souk.models.VideoGame;
 
@@ -31,8 +30,8 @@ public class BookingDAO extends DAO<Booking> {
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -75,7 +74,7 @@ public class BookingDAO extends DAO<Booking> {
 			}
 			
 		} catch (SQLException e) {
-			System.out.println("Error booking not found!");
+			e.printStackTrace();
 		}
 		
 		return booking;

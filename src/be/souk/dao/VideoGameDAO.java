@@ -135,7 +135,7 @@ public class VideoGameDAO extends DAO<VideoGame> {
 			}
 			
 		} catch (SQLException e) {
-			System.out.println("Error videogame not found!");
+			e.printStackTrace();
 		}
 		
 		return videoGame;

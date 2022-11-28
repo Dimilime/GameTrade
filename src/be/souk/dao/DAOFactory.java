@@ -10,11 +10,6 @@ public class DAOFactory extends AbstractDAOFactory {
 	protected static final Connection conn = GameTradeConnection.getInstance();
 
 	@Override
-	public DAO<Admin> getAdminDAO() {
-		return new AdminDAO(conn);
-	}
-
-	@Override
 	public DAO<Booking> getBookingDAO() {
 		return new BookingDAO(conn);
 	}

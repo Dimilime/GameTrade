@@ -23,14 +23,13 @@ public class CopyDAO extends DAO<Copy> {
 			stmt.setInt(cpt++, copy.getVideoGame().getIdVideoGame());
 			stmt.setInt(cpt++, copy.getOwner().getIdUser());
 			stmt.setBoolean(cpt++, copy.isAvailable());
-			stmt.executeUpdate();
 			
-			return true;
+			return stmt.executeUpdate() > 0;
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -86,7 +85,7 @@ public class CopyDAO extends DAO<Copy> {
 			}
 			
 		} catch (SQLException e) {
-			System.out.println("Error copy not found!");
+			e.printStackTrace();
 		}
 		
 		return copy;
@@ -119,35 +118,5 @@ public class CopyDAO extends DAO<Copy> {
 	}
 	
 	
-	
-//	public boolean isAvailable(Copy copy) {
-//		
-//		String req = "SELECT Copy.idCopy, Loan.onGoing "
-//				+ "FROM Copy INNER JOIN Loan ON Copy.idCopy = Loan.idCopy "
-//				+ "WHERE Copy.idCopy=?;";
-//		
-//		
-//		boolean isAvailable = true, ongoing;
-//		
-//		try(PreparedStatement stmt = connect.prepareStatement(req)) {
-//			
-//			stmt.setInt(1, copy.getIdCopy());
-//			try(ResultSet res = stmt.executeQuery()) {
-//				
-//				if(res.next())
-//				{
-//					ongoing = res.getBoolean(2);
-//					if(ongoing)
-//						isAvailable = false;
-//					else
-//						isAvailable = true;
-//				}
-//			}
-//		} catch (SQLException e) {
-//			System.out.println("Error copy not found!");
-//		}
-//		
-//		return isAvailable;
-//	}
 
 }

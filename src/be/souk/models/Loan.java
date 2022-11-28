@@ -96,12 +96,6 @@ public class Loan implements Serializable {
 		return loanDAO.create(this);
 	}
 
-	@Override
-	public String toString() {
-		return "Loan [idLoan=" + idLoan + ", startDate=" + startDate + ", endDate=" + endDate + ", ongoing=" + ongoing
-				+ ", borrower=" + borrower + ", lender=" + lender + ", copy=" + copy + "]";
-	}
-	
 	public static ArrayList<Loan> getAll() {
 		return loanDAO.findAll();
 	}

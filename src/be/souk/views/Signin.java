@@ -1,6 +1,5 @@
 package be.souk.views;
 
-import java.awt.EventQueue;
 import java.awt.Image;
 
 import javax.swing.*;
@@ -34,26 +33,6 @@ public class Signin extends JFrame {
 	private JLabel lblErrorPassword;
 	
 	
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Signin frame = new Signin();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
 	public Signin() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 578, 484);

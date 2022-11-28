@@ -36,14 +36,4 @@ public class CreditCostHistory implements Serializable{
 		this.modificationDate = modificationDate;
 	}
 	
-	@Override
-	public String toString() {
-		return "CreditCostHistory [idCreditCostHistory=" + idCreditCostHistory + ", creditCost=" + creditCost
-				+ ", modificationDate=" + modificationDate + "]";
-	}
-	
-	
-	
-	
-
 }

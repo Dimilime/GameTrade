@@ -9,7 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import be.souk.models.Admin;
-import be.souk.models.CreditCostHistory;
 import be.souk.models.VideoGame;
 
 import java.awt.Color;
@@ -19,7 +18,6 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;

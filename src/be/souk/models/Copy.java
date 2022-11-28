@@ -73,8 +73,6 @@ public class Copy implements Serializable {
 		return copyDAO.create(this);
 	}
 	
-	
-	
 	public boolean releaseCopy() {
 		isAvailable = true;
 		videoGame.selectBooking(this);
@@ -101,15 +99,10 @@ public class Copy implements Serializable {
 	}
 	
 	public boolean delete() {
-		return copyDAO.delete(this);
+		if(isAvailable)
+			return copyDAO.delete(this);
+		return false;
 	}
 
-	@Override
-	public String toString() {
-		return "Copy [idCopy=" + idCopy + ", videoGame=" + videoGame + ", owner=" + owner + ", loan=" + loan + "]";
-	}
 	
-	
-	
-
 }

@@ -173,12 +173,6 @@ public class VideoGame implements Serializable {
 		
 	}
 	
-	public boolean checkBorrowerPriority(ArrayList<Player> borrowers) {
-		
-		
-		return false;
-	}
-
 	@Override
 	public String toString() {
 		return "VideoGame [idVideoGame=" + idVideoGame + ", name=" + name + ", console=" + console + ", crediCost="

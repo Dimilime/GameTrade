@@ -9,8 +9,6 @@ public abstract class AbstractDAOFactory {
 	
 	public abstract DAO<User> getUserDAO();
 	
-	public abstract DAO<Admin> getAdminDAO();
-	
 	public abstract DAO<Booking> getBookingDAO();
 	
 	public abstract DAO<Player> getPlayerDAO();

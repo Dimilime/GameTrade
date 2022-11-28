@@ -1,6 +1,5 @@
 package be.souk.views;
 
-import java.awt.EventQueue;
 import java.awt.Image;
 
 import javax.swing.*;
@@ -43,22 +42,6 @@ public class Signup extends JFrame {
 	private DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 	private DateTimeFormatter formatter= DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
-	
-	//TODO: verifier calculateBalance
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Signup frame = new Signup();
-					frame.setVisible(true);
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	
 	public Signup() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

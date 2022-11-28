@@ -71,6 +71,13 @@ public abstract class User implements Serializable{
 		return idUser == other.idUser && Objects.equals(password, other.password)
 				&& Objects.equals(userName, other.userName);
 	}
+
+	@Override
+	public String toString() {
+		return "User [idUser=" + idUser + ", userName=" + userName + ", password=" + password + "]";
+	}
+	
+	
 	
 	
 	

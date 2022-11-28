@@ -99,7 +99,7 @@ public class PlayerDAO extends DAO<Player>  {
 			}
 			
 		} catch (SQLException e) {
-			System.out.println("Error player not found!");
+			e.printStackTrace();
 		}
 		
 		return player;
