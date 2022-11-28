@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.DAO;
@@ -124,14 +123,33 @@ public class Loan implements Serializable {
 	private int calculateBalance() {
 		int balance=0;
 		LocalDate receivedDate = LocalDate.now();
+		LocalDate start = startDate;
+		if(receivedDate.isBefore(endDate))
+		{	//if the loan ended before the end Date, borrower don't pay the total loan cost
+			while(!start.equals(endDate)) {
+				if(startDate.plusWeeks(1).equals(receivedDate)) {
+					endDate = receivedDate;
+					break;
+				}
+				else if(startDate.isAfter(receivedDate)) {
+					endDate = receivedDate;
+					break;
+				}
+				start= start.plusWeeks(1);
+			}
+		}
 		while(!startDate.equals(endDate))
 		{
 			
 			ArrayList<CreditCostHistory> latestModifieds= copy.getVideoGame().getCreditCostHistories()
-					.stream().filter(ccH -> ccH.getModificationDate().isBefore(startDate) ||ccH.getModificationDate().equals(startDate))
+					.stream().filter(ccH -> ccH.getModificationDate().isBefore(startDate) || ccH.getModificationDate().equals(startDate))
 					.collect(Collectors.toCollection(ArrayList::new));
-			CreditCostHistory lastModfied = latestModifieds.get(latestModifieds.size()-1);
-			balance+= lastModfied.getCreditCost();
+			if(latestModifieds.size()>0) {
+				CreditCostHistory lastModfied = latestModifieds.get(latestModifieds.size()-1);
+				balance+= lastModfied.getCreditCost();
+			}else
+				System.out.println("VideoGame has no history");
+			
 			
 			startDate= startDate.plusWeeks(1);
 		}

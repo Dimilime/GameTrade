@@ -17,7 +17,7 @@ public class PlayerDAO extends DAO<Player>  {
 	public boolean create(Player player) {
 		String req1 =  "Insert into user (userName,password) values (?,?); ";
 		String reqId = "Select @@IDENTITY ";
-		String req2 =  "INSERT INTO Player ( idUser, pseudo, dateOfBirth, registrationDate, credit ) Values (?,?,?,?,?);" ;
+		String req2 =  "INSERT INTO Player ( idUser, pseudo, dateOfBirth, registrationDate, credit, lastSeen ) Values (?,?,?,?,?,?);" ;
 		
 		try (PreparedStatement stmt = connect.prepareStatement(req1))
 		{
@@ -39,15 +39,15 @@ public class PlayerDAO extends DAO<Player>  {
 				stmt2.setDate(cpt++, Date.valueOf(player.getDateOfBirth()));
 				stmt2.setDate(cpt++, Date.valueOf(player.getRegistrationDate()));
 				stmt2.setInt(cpt++, player.getCredit());
+				stmt2.setDate(cpt++, Date.valueOf(player.getLastSeen()) );
 				
 				return stmt2.executeUpdate()>0;
 			}
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
-		
+		return false;
 	}
 
 	@Override
@@ -59,11 +59,12 @@ public class PlayerDAO extends DAO<Player>  {
 	public boolean update(Player player) {
 		
 		String req = "UPDATE player"
-				+ "	  SET credit = ? WHERE idUser=?";
+				+ "	  SET credit = ?, lastSeen = ? WHERE idUser=?";
 		
 		try(PreparedStatement stmt = connect.prepareStatement(req)) {
 			stmt.setInt(1, player.getCredit());
-			stmt.setInt(2, player.getIdUser());
+			stmt.setDate(2, Date.valueOf(player.getLastSeen()));
+			stmt.setInt(3, player.getIdUser());
 			
 			return stmt.executeUpdate() > 0;
 			
@@ -76,7 +77,7 @@ public class PlayerDAO extends DAO<Player>  {
 	@Override
 	public Player find(int id) {
 		
-		String req = "Select idUser, username, pseudo,dateOfBirth, registrationDate, credit"
+		String req = "Select idUser, username, pseudo,dateOfBirth, registrationDate, credit, lastSeen"
 				+ " from player p inner join user u on p.idUser=u.idUser where idUser=?;";
 		Player player=null;
 		
@@ -91,7 +92,9 @@ public class PlayerDAO extends DAO<Player>  {
 					LocalDate dob = res.getDate(4).toLocalDate();
 					LocalDate registrationDate = res.getDate(5).toLocalDate();
 					int credit = res.getInt(6);
+					LocalDate lastSeen = res.getDate(7).toLocalDate();
 					player = new Player(idUser,name,null,pseudo,dob,registrationDate,credit);
+					player.setLastSeen(lastSeen);
 				}		
 			}
 			
@@ -107,23 +110,6 @@ public class PlayerDAO extends DAO<Player>  {
 		return null;
 	}
 	
-	public boolean bonusAdded(Player player) {
-		String req = "select bonusAdded from player where idUser=?;";
-		boolean added = false;
-		
-		try(PreparedStatement stmt = connect.prepareStatement(req)) {
-			stmt.setInt(1, player.getIdUser());
-			try(ResultSet res = stmt.executeQuery()) {
-				if(res.next()) {
-					added = res.getBoolean("bonusAdded");
-				}
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return added;
-	}
 	
 	
 

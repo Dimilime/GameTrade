@@ -1,6 +1,7 @@
 package be.souk.models;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import be.souk.dao.AbstractDAOFactory;
@@ -76,7 +77,7 @@ public class Copy implements Serializable {
 	
 	public boolean releaseCopy() {
 		isAvailable = true;
-		videoGame.selectBooking();
+		videoGame.selectBooking(this);
 		return copyDAO.update(this);
 	}
 	
@@ -85,8 +86,11 @@ public class Copy implements Serializable {
 		copyDAO.update(this);
 	}
 	
-	public void borrow() {
-		
+	public void borrow(Booking booking) {
+		Long nbWeek = booking.getNbWeek();
+		Player borrower = booking.getBorrower();
+		loan = new Loan(0, LocalDate.now(), LocalDate.now().plusWeeks(nbWeek), true, borrower, owner, this);
+		loan.borrowing();
 	}
 	
 	public static ArrayList<Copy> getAll(){
@@ -99,7 +103,6 @@ public class Copy implements Serializable {
 	public boolean delete() {
 		return copyDAO.delete(this);
 	}
-
 
 	@Override
 	public String toString() {

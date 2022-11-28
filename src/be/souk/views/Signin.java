@@ -12,6 +12,7 @@ import be.souk.models.*;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.ItemListener;
+import java.time.LocalDate;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -133,6 +134,9 @@ public class Signin extends JFrame {
 							dispose();
 						}
 						else if( user instanceof Player p) {
+							p.addBirthdayBonus();
+							p.setLastSeen(LocalDate.now());
+							p.update();
 							PlayerInterface playerInterface = new PlayerInterface(p);
 							playerInterface.setVisible(true);
 							dispose();

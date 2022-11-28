@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.DAO;
 
-public class Booking implements Serializable{
+public class Booking implements Serializable, Comparable<Booking>{
 
 	static final long serialVersionUID = -1082029551876283845L;
 	
@@ -85,8 +85,11 @@ public class Booking implements Serializable{
 				+ ", nbWeek=" + nbWeek + ", videoGame=" + videoGame + "]";
 	}
 	
-	
-	
+	@Override
+	public int compareTo(Booking o) {
+		
+		return 0;
+	}
 	
 	
 	

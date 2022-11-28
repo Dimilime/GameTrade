@@ -173,10 +173,11 @@ public class PlayerInterface extends JFrame {
 		btnBorrow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = tableVideoGames.getSelectedRow();
-				VideoGame vg = videoGames.get(rowSelected);
+				
 				String input;
 				int nbweek=0;
 				if(rowSelected>-1) {
+					VideoGame vg = videoGames.get(rowSelected);
 					boolean error = false;
 					do {
 						try 
@@ -221,9 +222,6 @@ public class PlayerInterface extends JFrame {
 							Booking booking = new Booking(0, LocalDate.now(), player, vg, nbweek);
 							
 							if (booking.book()) {
-//								player.setCredit(player.getCredit() - vg.getCrediCost());
-//								player.update();
-//								lblCredit.setText("Credit(s): " + player.getCredit() + "  ");
 								JOptionPane.showMessageDialog(null, "booking added successfully !", null, JOptionPane.INFORMATION_MESSAGE);
 							}
 							else
@@ -261,12 +259,7 @@ public class PlayerInterface extends JFrame {
 				}
 				else
 					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
-//				player.editCredit(+bookings.get(rowSelected).getVideoGame().getCrediCost());//repayment of credits
-//				player.update();
-//				
-//				lblCredit.setText("Credit(s): " + player.getCredit() + "  ");
-//				//no need to remove booking from the list because in displayTableBookings the list is reset
-//				
+			
 			}
 		});
 		btnCancelBooking.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -291,8 +284,11 @@ public class PlayerInterface extends JFrame {
 				int rowSelected = tableLoans.getSelectedRow();
 				if(rowSelected>-1) {
 					Loan loan= loans.get(rowSelected);
-					if(loan.endLoan())
+					if(loan.endLoan()) {
 						JOptionPane.showMessageDialog(null, "Loan ended!", null, JOptionPane.INFORMATION_MESSAGE);
+						lblCredit.setText("Credit(s): "+ player.getCredit()+ "  ");
+					}
+						
 					else
 						JOptionPane.showMessageDialog(null, "Error loan not ended correctly", null, JOptionPane.ERROR_MESSAGE);
 					displayTableLoans(player);

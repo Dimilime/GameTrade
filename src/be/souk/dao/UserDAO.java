@@ -58,8 +58,9 @@ public class UserDAO extends DAO<User> {
 	public User getUser(String username) {
 		
 		String req = "Select * from user where username=?;";
-		String req2 = "Select idUser, username, pseudo,dateOfBirth, registrationDate, credit "
-				+ "from user u inner join player p on u.idUser = p.idUser  where username=?;";
+//		String req2 = "Select idUser, username, pseudo,dateOfBirth, registrationDate, credit "
+//				+ "from user u inner join player p on u.idUser = p.idUser  where username=?;";
+		PlayerDAO playerDAO = new PlayerDAO(connect);
 		boolean isAdmin=false;
 		User user=null;
 		
@@ -79,23 +80,24 @@ public class UserDAO extends DAO<User> {
 								res.getInt(1),res.getString(2), null
 								);
 					}else {
-						try(PreparedStatement stmt2 = connect.prepareStatement(req2)){
-							stmt2.setString(1, username);
-							
-							try(ResultSet res2 = stmt2.executeQuery()){
-								if(res2.next()) {
-									int id = res2.getInt(1);
-									String uname= res2.getString(2);
-									String pseudo = res2.getString(3);
-									LocalDate dob = res2.getDate(4).toLocalDate();
-									LocalDate registrationDate = res2.getDate(5).toLocalDate();
-									int credit = res2.getInt(6);
-									user = new Player(
-											id,uname,null,pseudo,dob,registrationDate,credit
-											);
-								}
-							}
-						}
+						user = playerDAO.find(res.getInt(1));
+//						try(PreparedStatement stmt2 = connect.prepareStatement(req2)){
+//							stmt2.setString(1, username);
+//							
+//							try(ResultSet res2 = stmt2.executeQuery()){
+//								if(res2.next()) {
+//									int id = res2.getInt(1);
+//									String uname= res2.getString(2);
+//									String pseudo = res2.getString(3);
+//									LocalDate dob = res2.getDate(4).toLocalDate();
+//									LocalDate registrationDate = res2.getDate(5).toLocalDate();
+//									int credit = res2.getInt(6);
+//									user = new Player(
+//											id,uname,null,pseudo,dob,registrationDate,credit
+//											);
+//								}
+//							}
+//						}
 					}
 					
 					

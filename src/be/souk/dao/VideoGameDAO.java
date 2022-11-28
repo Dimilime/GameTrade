@@ -100,9 +100,10 @@ public class VideoGameDAO extends DAO<VideoGame> {
 	public VideoGame find(int id) {
 		String req = "Select * from videoGame where idVideoGame=?;";
 		String req2= "select idCreditCostHistory, modificationDate from creditcosthistory where idVideoGame=? order by modificationDate";
+		String req3 = "Select idBooking from booking where idVideoGame = ?";
 		VideoGame videoGame=null;
 		CreditCostHistoryDAO creditCostHistoryDAO = new CreditCostHistoryDAO(connect);
-		
+		BookingDAO bookingDAO = new BookingDAO(connect);
 		try(PreparedStatement stmt = connect.prepareStatement(req)) {
 			
 			stmt.setInt(1, id);
@@ -120,6 +121,14 @@ public class VideoGameDAO extends DAO<VideoGame> {
 						try(ResultSet res2 = stmt2.executeQuery()){
 							while(res2.next())
 								videoGame.addCreditCostHistory(creditCostHistoryDAO.find(res2.getInt(1)));
+						}
+					}
+					try(PreparedStatement stmt3 = connect.prepareStatement(req3)){
+						
+						stmt3.setInt(1, videoGame.getIdVideoGame());
+						try(ResultSet res3 = stmt3.executeQuery()){
+							while(res3.next())
+								videoGame.addBooking(bookingDAO.find(res3.getInt(1)));
 						}
 					}
 				}		

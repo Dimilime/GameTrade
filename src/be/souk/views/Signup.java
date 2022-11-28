@@ -44,7 +44,7 @@ public class Signup extends JFrame {
 	private DateTimeFormatter formatter= DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
 	
-	//TODO: mettre en place JCALENDAR
+	//TODO: verifier calculateBalance
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -160,6 +160,7 @@ public class Signup extends JFrame {
 				p.setRegistrationDate(LocalDate.now());
 				p.setCredit(10);
 				p.setDateOfBirth( LocalDate.parse(dob, formatter) );
+				p.setLastSeen(LocalDate.now());
 				if(User.getUser(username) == null)
 				{
 					if (p.signUp())
@@ -168,6 +169,8 @@ public class Signup extends JFrame {
 					txtfPseudo.setText("");
 					txtfUserName.setText("");
 					passwordField.setText("");
+					p.addBirthdayBonus();
+					p.update();
 					PlayerInterface playerInterface = new PlayerInterface(p);
 					playerInterface.setVisible(true);
 					dispose();

@@ -3,6 +3,8 @@ package be.souk.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import be.souk.dao.AbstractDAOFactory;
 import be.souk.dao.DAO;
@@ -115,12 +117,66 @@ public class VideoGame implements Serializable {
 		this.creditCostHistories = creditCostHistories;
 	}
 	
-	public void selectBooking() {
-		
+	public void selectBooking(Copy copy) {
+		Booking booking =null;
 		if(bookings.size()>0) {
+			if(bookings.size()==1){//if there is just one booking, get this booking	
+				booking = bookings.get(0);
+			}
+			else if(bookings.size()>1)
+			{
+				Random rand = new Random();
+				int randomBooking = rand.nextInt(bookings.size());
+				
+				//order by desc 
+				bookings.sort(BookingComparator.borrowerCreditComp);
+				//filter out those that are equal, the first one is the max
+				bookings=bookings.stream()
+						.filter(bk -> bk.getBorrower().getCredit() == bookings.get(0).getBorrower().getCredit())
+						.collect(Collectors.toCollection(ArrayList::new));
+				if(bookings.size()==1) {
+					booking = bookings.get(0);
+				}else if(bookings.size()>1)
+				{
+					bookings.sort(BookingComparator.bookingDateComp);
+					bookings = bookings.stream().filter(bk -> bk.getBookingDate().equals(bookings.get(0).getBookingDate()))
+							.collect(Collectors.toCollection(ArrayList::new));
+					if(bookings.size()==1) {
+						booking = bookings.get(0);
+					}
+					else if(bookings.size()>1)
+					{
+						bookings.sort(BookingComparator.borrowerSeniorityComp);
+						bookings = bookings.stream()
+								.filter(bk -> bk.getBorrower().getRegistrationDate().equals(bookings.get(0).getBorrower().getRegistrationDate()))
+								.collect(Collectors.toCollection(ArrayList::new));
+						if(bookings.size()==1) {
+							booking = bookings.get(0);
+						}else if(bookings.size()>1)
+						{
+							bookings.sort(BookingComparator.borrowerAgeComp);
+							bookings = bookings.stream()
+									.filter(bk-> bk.getBorrower().getAge() == bookings.get(0).getBorrower().getAge())
+									.collect(Collectors.toCollection(ArrayList::new));
+							if(bookings.size()==1) {
+								booking = bookings.get(0);
+							}else
+								booking = bookings.get(randomBooking);
+						}
+					}
+				}
+			}
 			
+			copy.borrow(booking);
+			booking.delete();
 		}
 		
+	}
+	
+	public boolean checkBorrowerPriority(ArrayList<Player> borrowers) {
+		
+		
+		return false;
 	}
 
 	@Override

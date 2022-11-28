@@ -2,6 +2,7 @@ package be.souk.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -11,17 +12,18 @@ import be.souk.dao.*;
 public class Player extends User implements Serializable {
 	
 	private static final long serialVersionUID = -3258539560199471902L;
+	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
+	private static DAO<Player> playerDAO = adf.getPlayerDAO();
 	
 	private String pseudo;
 	private LocalDate dateOfBirth;
 	private LocalDate registrationDate;
 	private int credit;
+	private LocalDate lastSeen;
 	private ArrayList<Booking> bookings;
 	private ArrayList<Loan> loans;
 	private ArrayList<Copy> copies;
 	
-	private static AbstractDAOFactory adf = AbstractDAOFactory.getFactory(AbstractDAOFactory.DAO_FACTORY);
-	private static DAO<Player> playerDAO = adf.getPlayerDAO();
 
 	public Player() {}
 	
@@ -96,28 +98,39 @@ public class Player extends User implements Serializable {
 		this.copies = copies;
 	}
 
+	public LocalDate getLastSeen() {
+		return lastSeen;
+	}
+
+	public void setLastSeen(LocalDate lastSeen) {
+		this.lastSeen = lastSeen;
+	}
+
 	public boolean signUp() {
 		return playerDAO.create(this);
+	}
+	
+	public int getAge() {
+		return Period.between(dateOfBirth, LocalDate.now()).getYears();
 	}
 
 	
 	public void addBirthdayBonus() {
 		 
-		if(checkDateForBonus()) {
+		while(!lastSeen.equals(LocalDate.now())) {
+			
+			if(dateOfBirth.getMonth().equals(lastSeen.getMonth()) && dateOfBirth.getDayOfMonth() == lastSeen.getDayOfMonth()) {
+				credit+=2;
+			}
+			lastSeen = lastSeen.plusDays(1);
+		}
+		
+		//if he signup the day of his birthday
+		if(dateOfBirth.getMonth().equals(lastSeen.getMonth()) && dateOfBirth.getDayOfMonth() == lastSeen.getDayOfMonth()) {
+			credit+=2;
 		}
 	}
 	
-	private boolean checkDateForBonus() {
-		
-		//get his birdthday of this year
-		LocalDate birthday = LocalDate.of(LocalDate.now().getYear(), dateOfBirth.getMonth(), dateOfBirth.getDayOfMonth());
-		return false;
-	}
-	
-	private boolean bonusAlreadyAdded() {
-		
-		return ((PlayerDAO)playerDAO).bonusAdded(this);
-	}
 	
 	public static Player getPlayer(int id) {
 		return playerDAO.find(id);
