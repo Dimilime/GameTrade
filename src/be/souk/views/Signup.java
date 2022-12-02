@@ -146,16 +146,19 @@ public class Signup extends JFrame {
 				p.setLastSeen(LocalDate.now());
 				if(User.getUser(username) == null)
 				{
-					if (p.signUp())
+					if (p.signUp()) {
+						p.addBirthdayBonus();
+						p.update();
 						JOptionPane.showMessageDialog(Signup.this, "You have successfully registered!");
+					}
+						
 					dateField.setText("");
 					txtfPseudo.setText("");
 					txtfUserName.setText("");
 					passwordField.setText("");
-					p.addBirthdayBonus();
-					p.update();
-					PlayerInterface playerInterface = new PlayerInterface(p);
-					playerInterface.setVisible(true);
+					
+					Signin signin = new Signin();
+					signin.setVisible(true);
 					dispose();
 				}
 				else {

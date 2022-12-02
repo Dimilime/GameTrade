@@ -25,7 +25,7 @@ public class Admin extends User implements Serializable{
 		return videoGameDAO.delete(vg);
 	}
 	
-	public boolean setCreditVideoGame(VideoGame vg) {
+	public boolean editCreditVideoGame(VideoGame vg) {
 		return videoGameDAO.update(vg);
 	}
 

@@ -33,6 +33,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.swing.SwingConstants;
 
 public class PlayerInterface extends JFrame {
 
@@ -238,6 +239,12 @@ public class PlayerInterface extends JFrame {
 		btnBorrow.setBounds(399, 341, 241, 47);
 		VGPane.add(btnBorrow);
 		
+		JLabel lblNewLabel = new JLabel("Select a VideoGame to add a copy or to borrow");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(96, 10, 544, 18);
+		VGPane.add(lblNewLabel);
+		
 		JPanel bookingsPane = new JPanel();
 		tabbedPane.addTab("My Bookings", null, bookingsPane, null);
 		bookingsPane.setLayout(null);
@@ -254,8 +261,14 @@ public class PlayerInterface extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = tableBookings.getSelectedRow();
 				if(rowSelected>-1) {
-					player.cancelBooking(rowSelected);
-					displayTableBookings(player);
+					if(player.cancelBooking(rowSelected)) {
+						JOptionPane.showMessageDialog(null, "Booking canceled!", null, JOptionPane.INFORMATION_MESSAGE);
+						displayTableBookings(player);
+					}
+					else
+						JOptionPane.showMessageDialog(null, "Booking not canceled!", null, JOptionPane.ERROR_MESSAGE);
+					
+					
 				}
 				else
 					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
@@ -288,11 +301,11 @@ public class PlayerInterface extends JFrame {
 						JOptionPane.showMessageDialog(null, "Loan ended!", null, JOptionPane.INFORMATION_MESSAGE);
 						//just for dynamism
 						lblCredit.setText("Credit(s): "+ Player.getPlayer(player.getIdUser()).getCredit()+ "  ");
+						displayTableLoans(player);
 					}
 						
 					else
 						JOptionPane.showMessageDialog(null, "Error loan not ended correctly", null, JOptionPane.ERROR_MESSAGE);
-					displayTableLoans(player);
 				}
 				else
 					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);
@@ -321,11 +334,14 @@ public class PlayerInterface extends JFrame {
 				
 				int rowSelected = tableCopies.getSelectedRow();
 				if(rowSelected>-1) {
-					if(player.deleteCopy(rowSelected))
+					if(player.deleteCopy(rowSelected)) {
 						JOptionPane.showMessageDialog(null,"copy deleted successfully !", null, JOptionPane.INFORMATION_MESSAGE);
+						displayTableCopies(player);
+					}
+						
 					else
 						JOptionPane.showMessageDialog(null,"error copy not deleted, probably still on loan!", null, JOptionPane.ERROR_MESSAGE);
-					displayTableCopies(player);
+					
 				}
 				else
 					JOptionPane.showMessageDialog(null, "Please select a row", null, JOptionPane.ERROR_MESSAGE);

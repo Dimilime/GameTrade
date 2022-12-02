@@ -199,23 +199,26 @@ public class AdminInterface extends JFrame {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		
-		JButton btnSetCredit = new JButton("SET CREDIT");
+		JButton btnSetCredit = new JButton("EDIT CREDIT");
 		btnSetCredit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = table.getSelectedRow();
-				try 
-				{
-					int newCredit = Integer.valueOf(JOptionPane.showInputDialog("Enter the new value"));
-					VideoGame vg = videoGames.get(rowSelected);
-					vg.setCrediCost(newCredit);
-					if(admin.setCreditVideoGame(vg)) {
-						JOptionPane.showMessageDialog(null, "Credit updated successfully!");
+				if(rowSelected >-1)
+					try 
+					{
+						int newCredit = Integer.valueOf(JOptionPane.showInputDialog("Enter the new value"));
+						VideoGame vg = videoGames.get(rowSelected);
+						vg.setCrediCost(newCredit);
+						if(admin.editCreditVideoGame(vg)) {
+							JOptionPane.showMessageDialog(null, "Credit updated successfully!");
+						}
+						
+						displayTable();
+					}catch (NumberFormatException ex) {
+						JOptionPane.showMessageDialog(null, "Please enter a number");
 					}
-					
-					displayTable();
-				}catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(null, "Please enter a number");
-				}
+				else
+					JOptionPane.showMessageDialog(null, "Please select a row");
 				
 			}
 		});
@@ -227,10 +230,17 @@ public class AdminInterface extends JFrame {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowSelected = table.getSelectedRow();
-				
-				VideoGame vg = videoGames.get(rowSelected);
-				admin.deleteVideoGame(vg);
-				displayTable();
+				if(rowSelected >-1)
+				{
+					VideoGame vg = videoGames.get(rowSelected);
+					if(admin.deleteVideoGame(vg)) {
+						JOptionPane.showMessageDialog(null, "VideoGame deleted!");
+					}
+					
+					displayTable();
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Please select a row");
 				
 			}
 		});

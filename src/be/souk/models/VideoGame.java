@@ -71,11 +71,16 @@ public class VideoGame implements Serializable {
 		return copies ;
 	}
 	
+	public ArrayList<CreditCostHistory> getCreditCostHistories() {
+		return creditCostHistories;
+	}
+
+	public void setCreditCostHistories(ArrayList<CreditCostHistory> creditCostHistories) {
+		this.creditCostHistories = creditCostHistories;
+	}
+	
 	public void addCopy(Copy copy) {
 		copies.add(copy);
-	}
-	public void removeCope(Copy copy) {
-		copies.remove(copy);
 	}
 	
 	public void addCreditCostHistory(CreditCostHistory ccH) {
@@ -84,14 +89,6 @@ public class VideoGame implements Serializable {
 	
 	public void addBooking(Booking b) {
 		bookings.add(b);
-	}
-	
-	public void removeBooking(Booking b) {
-		bookings.remove(b);
-	}
-
-	public boolean update() {
-		return videoGameDAO.update(this);
 	}
 	
 	public static ArrayList<VideoGame> getAll(){
@@ -107,14 +104,6 @@ public class VideoGame implements Serializable {
 	
 	public static VideoGame getVideoGame(int id) {
 		return videoGameDAO.find(id);
-	}
-
-	public ArrayList<CreditCostHistory> getCreditCostHistories() {
-		return creditCostHistories;
-	}
-
-	public void setCreditCostHistories(ArrayList<CreditCostHistory> creditCostHistories) {
-		this.creditCostHistories = creditCostHistories;
 	}
 	
 	public void selectBooking(Copy copy) {
